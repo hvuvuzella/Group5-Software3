@@ -7,3 +7,12 @@ We love coding almost as much as eating tasty food and highly evaluate the code'
 
 The purpose of this project is to demonstrate 
 our GitHub and API building knowledge.
+___
+## Team
+Our team is made up of 6 developers:
+* Erika Tatchyn
+* Hannah Magee
+* Helen Vu
+* Inna Pospiech
+* Iryna Kharchenko
+* Kate Losyeva
