@@ -18,5 +18,17 @@ Here's a little video of me on my wheels (I'm still scared of spins..):
 
 https://github.com/hvuvuzella/Group5-Software3/assets/144286058/af8e78b9-cc0e-4b1c-9fe7-6223c2be6f02
 
+**Kate Losyeva**
+
+Hobbies:
+
+During the last two years coding has been my hobby. Why hobby?
+Because it doesn't bring income ...yet) and it brings fun and
+joy ...still) But judging by what my friends say it's not for 
+long when you start working. So I am enjoying this time now. 
+Apart from this I like and miss all the winter
+sports.
+
+![My hobby](https://drive.google.com/uc?export=view&id=1r0IfTIE6IadGdaEnG4ohbkqXIoDaEkSd)
 
 
