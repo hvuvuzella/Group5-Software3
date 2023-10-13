@@ -4,7 +4,7 @@
 
 ### Welcome to Group5-Software-3's group repository.
 
-_Here you can find a little bit about what our favourit hobbies/interests are ✨
+_Here you can find a little bit about what our favourite hobbies/interests are_ ✨
 
 **Helen Vu**
 
