@@ -14,6 +14,10 @@ One of my favourite hobbies is Rollerskating (quad wheels!). I started nearly a 
 
 In normal times, you can oftem find me at the roller rink, in one of my skate classes, and even a skate party when there's one on  😄
 
-Here's a little video of me on my wheels:
+Here's a little video of me on my wheels (I'm still scared of spins..):
 
+<video controls style="max-width: 100%;">
+    <source src="https://drive.google.com/file/d/1yKcFVS40v1C1xXTQnf9EGjTt6oGGHzHh/view?usp=sharing" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
