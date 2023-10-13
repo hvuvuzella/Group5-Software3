@@ -16,8 +16,7 @@ In normal times, you can oftem find me at the roller rink, in one of my skate cl
 
 Here's a little video of me on my wheels (I'm still scared of spins..):
 
-<video controls style="max-width: 100%;">
-    <source src="https://drive.google.com/file/d/1yKcFVS40v1C1xXTQnf9EGjTt6oGGHzHh/view?usp=sharing" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+https://github.com/hvuvuzella/Group5-Software3/assets/144286058/af8e78b9-cc0e-4b1c-9fe7-6223c2be6f02
+
+
 
