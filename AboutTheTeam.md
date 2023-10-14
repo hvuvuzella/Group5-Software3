@@ -35,6 +35,7 @@ sports.
 
 Hobbies:
 
-I used to have lots of hobbies in my life: crocheting, cross stichting, reading... Right now my favorite hobbies are traveling and playing board games with my children and friends. Our favorite game recently is Settlers Catan and Cluedo. And our favorite way to travel was biking to the Scottish islands.
+I used to have lots of hobbies in my life: crocheting, cross stitching, reading... Right now my favorite hobbies are traveling and playing board games with my children and friends. Our favourite game recently is Settlers Catan and Cluedo. And our favourite way to travel was biking to the Scottish islands.
 
-![My hobby](https://drive.google.com/file/d/1Y17cuZUd4okPuT5B_lDvWycuoj1iFp9o/view?usp=drive_link)
+![biking](https://github.com/hvuvuzella/Group5-Software3/assets/94489330/e554cdc0-d64b-4d11-a05f-136e07bdf0d8)
+
