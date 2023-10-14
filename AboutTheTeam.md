@@ -39,3 +39,16 @@ I used to have lots of hobbies in my life: crocheting, cross stitching, reading.
 
 ![biking](https://github.com/hvuvuzella/Group5-Software3/assets/94489330/e554cdc0-d64b-4d11-a05f-136e07bdf0d8)
 
+**Iryna Kharchenko**
+
+Hobbies:
+
+My hobby is photography. It is a blend of physical challenges and a touch of psychology.
+
+When I shoot I become more than a photographer, I become a psychologist, intuitively capturing the dynamics and emotions that make each family or couple unique. It's about creating an environment where everyone can be themselves, even during their most vulnerable moments.
+
+Now I paused photography and decided to focus on tech education.
+
+Here is [website](https://zefirphoto.com.ua/) with my works. I hope you enjoy it.
+
+![My hobby](<photo_2022-11-13 17.08 copy.jpg>)
