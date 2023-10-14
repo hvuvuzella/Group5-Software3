@@ -51,4 +51,4 @@ Now I paused photography and decided to focus on tech education.
 
 Here is [website](https://zefirphoto.com.ua/) with my works. I hope you enjoy it.
 
-![My hobby](<photo_2022-11-13 17.08 copy.jpg>)
+![My photo](https://drive.google.com/drive/u/0/folders/1U1eYOmuEolWL3Be7FvcR3xyxmZzw-fty)
