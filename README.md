@@ -35,3 +35,11 @@ we can demonstrate it
   ![Our Trello board](https://drive.google.com/uc?export=view&id=1Qr_8FOE7Mdx5oN1vCCo9tzMSQb6jwaax)
 * * Each of us created their branch and added his piece of work,
 after which branches were merged
+___
+* A [requirements.txt file](requirements.txt) file was created:
+    * 
+    * A requirments.txt file in Python outlines all of the dependencies and software packages required by a project, and lists the names and versions of all the relevant libraries and modules.
+    * These files are important as they provide a standardized way to track and manage dependencies, and ensures that all collaborators are working in the right virtual environment
+    * Using 'pip' tool, developers can quickly install all of the packages they need in the terminal, by using te command: `pip install -r requirements.txt`
+
+___
