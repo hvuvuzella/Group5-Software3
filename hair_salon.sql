@@ -55,8 +55,8 @@ CREATE TABLE appointments (
 	FOREIGN KEY (treatment_id) REFERENCES treatments(id)
 );
 
-/* STORED PROCEDURE to insert appointments, ensuring that appointments can only be made if they are within 
-   the salon opening times, and they DO NOT clash with any other appointments. */
+/* STORED PROCEDURE to insert new appointments: new appointments can only be made if they are wtihin the salon
+opening hours, if they do not run past salon closing time, and if they do no clash with an already existing appointment */
 DELIMITER //
 CREATE PROCEDURE InsertNewAppointment(  -- arguments for procedure when calling it:
     IN a_client_id INT,
@@ -72,12 +72,12 @@ BEGIN
     DECLARE appointment_end_time TIME; -- local variable to store the calculated end time of appointment
 
 	-- get salon opening hours for the day of week that appointment falls on:
-    SELECT opening_time, closing_time    -- retrieve open/close times from salon_hours table
+    SELECT opening_time, closing_time    -- retrieve open/close times from opening_hours table
     INTO b_opening_time, b_closing_time  -- assign retrieved values to the declared local variables
     FROM opening_hours
     WHERE day_of_week = DAYNAME(a_appt_date);  -- Use of in-built function DAYNAME() to extract the appt_date's day of the week, so it matches the opening_hours' day_of_week format
 
-	-- get service duration from services table:
+	-- get treatment duration from services table:
 	SELECT duration
     INTO treatment_duration
     FROM treatments
@@ -87,11 +87,11 @@ BEGIN
 	SET appointment_end_time = ADDTIME(a_appt_time, treatment_duration);
 
     IF b_opening_time IS NOT NULL AND b_closing_time IS NOT NULL AND -- if salon is open,
-		TIME(a_appt_time) BETWEEN b_opening_time AND b_closing_time THEN -- and appt time is during open hours,
+		TIME(a_appt_time) BETWEEN b_opening_time AND b_closing_time THEN -- and appt time is during opening hours,
         
 		IF appointment_end_time > b_closing_time THEN -- then check if appointment runs over salon closing time. If so, throw error:
-			SIGNAL SQLSTATE 'APCLO' -- New SQLSTATE code for error in appt end time
-			SET MESSAGE_TEXT = 'This apppointment cannot be made as it will run past the salon closing time';
+			SIGNAL SQLSTATE 'APER1' -- New SQLSTATE code for error in appt end time
+			SET MESSAGE_TEXT = 'Error: this appointment cannot be made because it will run over salon closing time';
 		ELSE
 			
 			IF EXISTS ( -- if not, then check if appointment clashes with any existing appointments the hair stylist already has. If so, throw error:
@@ -104,8 +104,8 @@ BEGIN
 					OR (appointment_end_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
 				)
 			) THEN
-				SIGNAL SQLSTATE 'APCLA' -- New SQLSTATE code for appointment clashing with another appt
-				SET MESSAGE_TEXT = 'This appointment cannot be made as it clashes with another appointment for the same stylist.';
+				SIGNAL SQLSTATE 'APER2' -- New SQLSTATE code for appointment clashing with another appt
+				SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it clashes with an already exisiting appointment. Please choose another time';
             ELSE
 				-- If no violations are found, then allow to insert data
 				INSERT INTO appointments (client_id, stylist_id, treatment_id, appt_date, appt_time)
@@ -113,8 +113,8 @@ BEGIN
 			END IF;
 		END IF;
 	ELSE -- BUT, if any appointments are made outside opening hours anyway(see first IF condition), then throw error:
-		SIGNAL SQLSTATE 'APERR'
-        SET MESSAGE_TEXT = 'This appoinment cannot be made as it is not within salon opening hours';
+		SIGNAL SQLSTATE 'APER3'
+        SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it is not within salon opening times';
 	END IF;
 END;
 //
