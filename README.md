@@ -44,6 +44,9 @@ we can demonstrate it
   ![Our Trello board](https://drive.google.com/uc?export=view&id=1Qr_8FOE7Mdx5oN1vCCo9tzMSQb6jwaax)
 - Each of us created their branch and added his piece of work,
     after which branches were merged
+    ![VSCode Changes](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/f2e7de21-c7c0-4577-82c3-b34bf5905197)
+    ![Terminal Commands](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/94803866-66a4-4b3c-a9d7-cc150a196beb)
+
 
 ---
 
