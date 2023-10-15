@@ -1,6 +1,5 @@
 # Group5.Software3
 
----
 
 Welcome to our repository.
 
@@ -40,10 +39,10 @@ we can demonstrate it
   - [Iryna Kharchenko](https://github.com/Kharchenko-Iryna)
 - A private team repository was created for this Assignment
 - We conducted Zoom meetings to plan our work
-  ![Our Zoom meeting]()
+  ![Our Zoom meeting](https://drive.google.com/uc?export=view&id=1yp10jaOZOpAM5IPIzNbFd0v0UHPUSCxr)
 - Our team kept track of our work using Trello
   ![Our Trello board](https://drive.google.com/uc?export=view&id=1Qr_8FOE7Mdx5oN1vCCo9tzMSQb6jwaax)
-- - Each of us created their branch and added his piece of work,
+- Each of us created their branch and added his piece of work,
     after which branches were merged
 
 ---
