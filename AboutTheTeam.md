@@ -69,6 +69,6 @@ I have had to put most activities on hold while I am studying for a new job in t
 
 Hobbies:
 
-I'm a curious soul, always eager to embark on new adventures, whether it's through the pages of a book, the pixels of a screen, or the landscapes of the world. New technology, marketing, psychology, there's always something new to learn. I'm also a passionate traveler, exploring the rich cultures and diverse landscapes. Scotland's natural beauty, in particular, has become a boundless source of inspiration for me. The rugged highlands, serene lochs, and ancient castles have enriched my life in ways I could have never imagined.
+I'm a curious soul, always eager to embark on new adventures, whether it's through the pages of a book, the pixels of a screen, or the landscapes of the world. New technology, marketing, psychology, there's always something new to learn :books:. I'm also a passionate traveler, exploring the rich cultures and diverse landscapes. Scotland's natural beauty, in particular, has become a boundless source of inspiration for me. The rugged highlands, serene lochs, and ancient castles have enriched my life in ways I could have never imagined :sparkling_heart:.
 
 ![Scotland](https://github.com/hvuvuzella/Group5-Software3/assets/147543751/9073976b-73c1-4856-a5fd-8f5992f020ac)
