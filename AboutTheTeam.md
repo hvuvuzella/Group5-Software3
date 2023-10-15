@@ -64,3 +64,11 @@ snowboarding, swimming, kayaking - really anything water-based!
 I have had to put most activities on hold while I am studying for a new job in tech, but I try to fit something in whenever I can!
 
 ![kayaking](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/0f0d2a26-c5d0-4e8b-a2fa-9d88f0384b23)
+
+**Inna Pospiech**
+
+Hobbies:
+
+I
+
+![Scotland]
