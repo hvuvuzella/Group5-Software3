@@ -20,20 +20,20 @@ CREATE TABLE stylists (
 	mobile VARCHAR(15)
 );
 
-CREATE TABLE salon_info (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    salon_name VARCHAR(100),
-    telephone INT,
-    email VARCHAR(100),
-    address VARCHAR(200)
-);
-
 CREATE TABLE treatments (
     id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(150) NOT NULL,
 	description VARCHAR(400),
 	price DECIMAL(10,2),
 	duration TIME
+);
+
+CREATE TABLE salon_info (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    salon_name VARCHAR(100),
+    telephone INT,
+    email VARCHAR(100),
+    address VARCHAR(200)
 );
 
 CREATE TABLE opening_hours (
@@ -68,6 +68,16 @@ VALUES
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
 	('THE CUT', '0208988652' 'info@thecut.co.uk', '52 Archer Street, Soho, London, W1 4HG');
+
+INSERT INTO opening_hours (day_of_week, opening_time, closing_time)
+VALUES
+	('Monday', NULL, NULL),
+    ('Tuesday', NULL, NULL),
+    ('Wednesday', '09:00:00', '18:00:00'),
+    ('Thursday', '09:00:00', '20:00:00'),
+    ('Friday', '09:00:00', '18:00:00'),
+    ('Saturday', '10:00:00', '18:00:00'),
+    ('Sunday', '12:00:00', '17:00:00');
 
 INSERT INTO treatments (name, description, price, duration)
 VALUES
