@@ -64,6 +64,10 @@ VALUES
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
 	('Sophie', 'Jackson', '0798865432');
+    
+INSERT INTO salon_info (salon_name, telephone, email, address)
+VALUES
+	('THE CUT', '0208988652' 'info@thecut.co.uk', '52 Archer Street, Soho, London, W1 4HG');
 
 INSERT INTO treatments (name, description, price, duration)
 VALUES
