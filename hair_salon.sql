@@ -1,9 +1,10 @@
 DROP DATABASE IF EXISTS hair_salon;
-
+-- create database:
 CREATE DATABASE hair_salon;
 
 USE hair_salon;
 
+-- create normalised tables:
 CREATE TABLE clients (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	first_name VARCHAR(40) NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE salon_info (
 
 CREATE TABLE opening_hours (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL, -- column can only consist of these values
     opening_time TIME,
     closing_time TIME
 );
@@ -55,3 +56,12 @@ CREATE TABLE appointments (
 	FOREIGN KEY (treatment_id) REFERENCES treatments(id)
 );
 
+-- insert data into tables:
+
+INSERT INTO clients (first_name, last_name, mobile, email)
+VALUES
+    ('Jane', 'Smith', '07763518723', 'jane.smith@email.com');
+    
+INSERT INTO stylists (first_name, last_name, mobile)
+VALUES
+	('Sophie', 'Jackson', '0798865432');
