@@ -22,7 +22,7 @@ Our team is made up of 6 developers:
 - Iryna Kharchenko
 - Kate Losyeva
 
----
+[Read more about our team members](AboutTheTeam.md)
 
 ## GitHub command and teamwork
 
