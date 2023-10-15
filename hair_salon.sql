@@ -167,4 +167,10 @@ CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:00:00');
 -- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
 -- Hopefully the Python API we build will do this part for us when end user "books" their appointment
+
+-- need to create a stored procedure to delete appts
+
+-- need to create a stored procedure to update appts
+
+-- need to create a table for seeing appointment availability for each stylist?
     
