@@ -53,3 +53,14 @@ Here is [website](https://zefirphoto.com.ua/) with my works. I hope you enjoy it
 
 ![photo_2022-11-13 17 08 copy](https://github.com/hvuvuzella/Group5-Software3/assets/147556279/8f489a22-ba4d-4610-9aa1-d298352c87d3)
 
+**Hannah Magee**
+
+Hobbies:
+
+I really enjoy being active and doing sport. My favourite sports are tennis and badminton, but I will play anything and everything.
+I recently started to learn how to play golf which is very challenging but a lot of fun. I also really enjoy cycling, 
+snowboarding, swimming, kayaking - really anything water-based!
+
+I have had to put most activities on hold while I am studying for a new job in tech, but I try to fit something in whenever I can!
+
+![kayaking](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/0f0d2a26-c5d0-4e8b-a2fa-9d88f0384b23)
