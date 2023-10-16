@@ -37,10 +37,10 @@ we can demonstrate it
   - [Erika Tatchyn](https://github.com/ErikaTatchyn)
   - [Hannah Magee](https://github.com/hannahmagee)
   - [Iryna Kharchenko](https://github.com/Kharchenko-Iryna)
-- A private team repository was created for this Assignment
-- We conducted Zoom meetings to plan our work
+- A private team repository was created for this Assignment 
+- We conducted Zoom meetings to plan our work 
   ![Our Zoom meeting](https://drive.google.com/uc?export=view&id=1yp10jaOZOpAM5IPIzNbFd0v0UHPUSCxr)
-- Our team kept track of our work using Trello
+- Our team kept track of our work using Trello. [Link to Trello](https://trello.com/b/XQQ0Zzq4/group5-software3)
   ![Our Trello board](https://drive.google.com/uc?export=view&id=1Qr_8FOE7Mdx5oN1vCCo9tzMSQb6jwaax)
 - Each of us created their branch and added his piece of work,
     after which branches were merged
