@@ -77,7 +77,7 @@ BEGIN
     FROM opening_hours
     WHERE day_of_week = DAYNAME(a_appt_date);  -- Use of in-built function DAYNAME() to extract the appt_date's day of the week, so it matches the opening_hours' day_of_week format
 
-	-- get treatment duration from services table:
+	-- get treatment duration from treatments table:
 	SELECT duration
     INTO treatment_duration
     FROM treatments
@@ -132,11 +132,13 @@ BEGIN
     DECLARE appointment_exists INT;
     SELECT COUNT(*) INTO appointment_exists FROM appointments WHERE id = a_appointment_id;
     
+    -- if appt does not exist, then throw error:
     IF appointment_exists = 0 THEN
-		SIGNAL SQLSTATE 'APER4'
+		SIGNAL SQLSTATE 'APER4' -- New SQLSTATE code for error appt does not exist
 		SET MESSAGE_TEXT ='Error: appointment cannot be deleted because it does not exist. Please try another appointment id';
     ELSE
-		-- delete the appointment
+    
+		-- otherwise, if appointment does exist, then allow to delete data (i.e. cancel appointment):
 		DELETE FROM appointments WHERE id = a_appointment_id;
 	END IF;
 END;
