@@ -121,6 +121,72 @@ END;
 DELIMITER ;
 
 
+/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG APPOINTMENTS*/
+
+DELIMITER //
+CREATE PROCEDURE UpdateAppointmentDateTime(
+    IN a_appointment_id INT,
+    IN a_new_appt_date DATE,
+    IN a_new_appt_time TIME
+)
+BEGIN
+
+    DECLARE appointment_exists INT;
+    DECLARE new_appt_end_time TIME;
+	DECLARE new_opening_time TIME;
+	DECLARE new_closing_time TIME;
+    
+	-- Check if the appointment exists:
+    SELECT COUNT(*) INTO appointment_exists FROM appointments WHERE id = a_appointment_id;
+    
+    -- If the appointment does not exist, throw an error:
+    IF appointment_exists = 0 THEN
+        SIGNAL SQLSTATE 'UPER1' -- Custom SQLSTATE code for appointment not found
+        SET MESSAGE_TEXT = 'Error: Appointment not found. Please provide a valid appointment ID';
+    ELSE
+        -- Calculate the new appointment end time based on the provided date and time:
+        SELECT ADDTIME(a_new_appt_time, (SELECT duration FROM treatments WHERE id = treatment_id))
+        INTO new_appt_end_time
+        FROM appointments
+        WHERE id = a_appointment_id;
+
+        -- Check if the new appointment time falls within salon opening hours:
+        SELECT opening_time, closing_time
+        INTO new_opening_time, new_closing_time
+        FROM opening_hours
+        WHERE day_of_week = DAYNAME(a_new_appt_date);
+
+        IF new_opening_time IS NOT NULL AND new_closing_time IS NOT NULL AND
+           TIME(a_new_appt_time) BETWEEN new_opening_time AND new_closing_time THEN
+            -- Check if the new appointment time clashes with the stylist's existing appointments:
+            IF EXISTS (
+                SELECT 1
+                FROM appointments
+                WHERE stylist_id = (SELECT stylist_id FROM appointments WHERE id = a_appointment_id)
+                AND appt_date = a_new_appt_date
+                AND (
+                    (a_new_appt_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+                    OR (new_appt_end_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+                )
+            ) THEN
+                SIGNAL SQLSTATE 'UPER2' -- Custom SQLSTATE code for appointment clash with another appointment
+                SET MESSAGE_TEXT = 'Error: The updated appointment clashes with an existing appointment. Please choose another time.';
+            ELSE
+                -- If no violations are found, update the appointment date and time:
+                UPDATE appointments
+                SET appt_date = a_new_appt_date, appt_time = a_new_appt_time
+                WHERE id = a_appointment_id;
+            END IF;
+        ELSE
+            SIGNAL SQLSTATE 'UPER3' -- Custom SQLSTATE code for appointment outside opening hours
+            SET MESSAGE_TEXT = 'Error: The updated appointment is not within salon opening hours.';
+        END IF;
+    END IF;
+END;
+//
+DELIMITER ;
+
+
 /* STORED PROCEDURE to cancel appointments: */
 
 DELIMITER //
@@ -203,20 +269,41 @@ CALL InsertNewAppointment(2, 1, 2, '2023-11-02', '11:00:00');
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
 -- Hopefully the Python API we build will insert data for us when end user "books" their appointment
 
--- delete appointmnents by calling stored procedure created above:
-SELECT * FROM appointments AS before_cancellation;
+
+-- update exisitng appointment (date & time) by calling stored procedure created above,
+-- in the format: CALL UpdateAppointmentDateTime(appointment_id, new_appt_date, new_appt_time):
+CREATE VIEW before_update_appt AS -- create a VIEW to see all appts BEFORE cancellation
+SELECT * FROM appointments
+ORDER BY id;
+SELECT * FROM before_update_appt; 
+
+CALL UpdateAppointmentDateTime(1, '2023-11-03', '10:30:00');
+
+CREATE VIEW after_update_appt AS -- create a VIEW to see all appts BEFORE cancellation
+SELECT * FROM appointments
+ORDER BY id;
+SELECT * FROM after_update_appt; 
+
+
+-- test cancel appointmnents feature by calling stored procedure created above,
+-- in the format: CALL CancelAppointment(appointment_id):
+CREATE VIEW before_cancellation AS -- create a VIEW to see all appts BEFORE cancellation
+SELECT * FROM appointments
+ORDER BY id;
+SELECT * FROM before_cancellation; -- see the VIEW
+
 CALL CancelAppointment(2);
-CREATE VIEW after_cancellation AS 
+
+CREATE VIEW after_cancellation AS -- -- create a VIEW to see all appts AFTER cancellation
 SELECT * FROM appointments
 ORDER by id; 
-
-SELECT * FROM after_cancellation;-- see appoitnments table after cancelled appt
+SELECT * FROM after_cancellation;-- see the VIEW
 
 
 
 -- need to create a stored procedure to delete appts - DONE
 
--- need to create a stored procedure to update appts - TO DO
+-- need to create a stored procedure to update appts - DONE
 
 -- need to create a table for seeing appointment availability for each stylist? - TBC
     
