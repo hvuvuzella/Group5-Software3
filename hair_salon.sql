@@ -229,8 +229,12 @@ VALUES
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
-	('Sophie', 'Jackson', '0798865432');
-    -- please add 5 stylits total
+	('Erikca', 'Tatchyn', '0798865432'),
+    ('Hannah', 'Magee', '0774566874'),
+    ('Kate', 'Losyeva', '0779654478'),
+    ('Inna', 'Pospiech', '07775899654'),
+    ('Helen', 'Vu', '07748522478'),
+    ('Iryna', 'Kharchenko', '07747585523');
     
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
