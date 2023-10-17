@@ -232,9 +232,7 @@ VALUES
 	('Erikca', 'Tatchyn', '0798865432'),
     ('Hannah', 'Magee', '0774566874'),
     ('Kate', 'Losyeva', '0779654478'),
-    ('Inna', 'Pospiech', '07775899654'),
-    ('Helen', 'Vu', '07748522478'),
-    ('Iryna', 'Kharchenko', '07747585523');
+    ('Inna', 'Pospiech', '07775899654');
     
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
@@ -246,7 +244,7 @@ VALUES
 	('Monday', NULL, NULL),
     ('Tuesday', NULL, NULL),
     ('Wednesday', '09:00:00', '18:00:00'),
-    ('Thursday', '09:00:00', '20:00:00'),
+    ('Thursday', '09:00:00', '18:00:00'),
     ('Friday', '09:00:00', '18:00:00'),
     ('Saturday', '10:00:00', '18:00:00'),
     ('Sunday', '12:00:00', '17:00:00');
@@ -266,16 +264,25 @@ VALUES
     ('Perm - Straight', 'Dry cut on short - medium length hair', 200.00, '02:00:00');
     -- add more treatments if you think necessary
 
--- insert data into appointments table by calling stored procedure created above:
-CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:00:00');
-CALL InsertNewAppointment(2, 1, 2, '2023-11-02', '11:00:00');
+-- INSERT(add) new appointments - insert data into appointments table by calling stored procedure created above,
+-- in the format: CALL InsertNewAppointment(client_id, stylist_id, treatment_id, appt_date, appt_time);
+CALL InsertNewAppointment(1, 1, 1, '2023-11-01', '09:00:00');
+CALL InsertNewAppointment(2, 2, 3, '2023-11-01', '11:00:00');
+CALL InsertNewAppointment(3, 3, 5, '2023-11-02', '13:30:00');
+CALL InsertNewAppointment(4, 4, 6, '2023-11-02', '12:00:00');
+CALL InsertNewAppointment(5, 1, 1, '2023-11-03', '17:00:00');
+CALL InsertNewAppointment(6, 2, 10, '2023-11-03', '16:00:00');
+CALL InsertNewAppointment(7, 3, 9, '2023-11-04', '10:30:00');
+CALL InsertNewAppointment(8, 4, 4, '2023-11-05', '14:00:00');
+CALL InsertNewAppointment(9, 1, 7, '2023-11-08', '15:30:00');
+CALL InsertNewAppointment(10, 2, 8, '2023-11-09', '12:30:00');
 -- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
 -- Hopefully the Python API we build will insert data for us when end user "books" their appointment
 
 
--- update exisitng appointment (date & time) by calling stored procedure created above,
--- in the format: CALL UpdateAppointmentDateTime(appointment_id, new_appt_date, new_appt_time):
+-- UPDATE exisitng appointments (date & time) - update existing data in appointments table by calling stored procedure created above,
+-- in the format: CALL UpdateAppointmentDateTime(appointment_id, new_appt_date, new_appt_time);
 CREATE VIEW before_update_appt AS -- create a VIEW to see all appts BEFORE cancellation
 SELECT * FROM appointments
 ORDER BY id;
@@ -289,14 +296,15 @@ ORDER BY id;
 SELECT * FROM after_update_appt; 
 
 
--- test cancel appointmnents feature by calling stored procedure created above,
--- in the format: CALL CancelAppointment(appointment_id):
+-- CANCEL(delete) existing appointmnents - delete existing data in appointments table by calling stored procedure created above,
+-- in the format: CALL CancelAppointment(appointment_id);
 CREATE VIEW before_cancellation AS -- create a VIEW to see all appts BEFORE cancellation
 SELECT * FROM appointments
 ORDER BY id;
 SELECT * FROM before_cancellation; -- see the VIEW
 
 CALL CancelAppointment(2);
+-- CALL CancelAppointment(50);  -- check stored procedure works (uncomment to try): appt does not exist
 
 CREATE VIEW after_cancellation AS -- -- create a VIEW to see all appts AFTER cancellation
 SELECT * FROM appointments
