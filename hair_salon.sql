@@ -215,14 +215,22 @@ DELIMITER ;
 
 INSERT INTO clients (first_name, last_name, mobile, email)
 VALUES
-    ('Jane', 'Smith', '07763518723', 'jane.smith@email.com'),
-    ('Helen', 'Vu', '07754896574', 'helen.vu@email.com');
-    -- please add 3 more rstylists
+    ('Michael', 'Jackson', '07763518723', 'michael.jackson@email.com'),
+    ('Brody', 'Dalle', '07754896574', 'brody.dalle@email.com'),
+    ('Jennie', 'Vee', '07784579521', 'jennie.vee@email.com'),
+    ('Joaquin', 'Phoenix', '07747854678', 'sophie.judd@email.com'),
+    ('Jesse', 'Hughes', '07958335464', 'jesse.hughes@email.com'),
+    ('Ozzy', 'Osbourne', '07725143358', 'ozzy.osbourne@email.com'),
+    ('Trent', 'Reznor', '07773255984', 'trent.reznor@email.com'),
+    ('Jimi', 'Hendrix', '07958844687', 'jimi.hendrix@email.com'),
+    ('David', 'Bowie', '07845698715', 'david.bowie@egmail.com'),
+    ('Lana', 'Del Rey', '07546668745', 'lana.del.rey@email.com');
+    -- please add 10 clients total (or more)
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
 	('Sophie', 'Jackson', '0798865432');
-    -- please add 9 more rows of data
+    -- please add 5 stylits total
     
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
@@ -253,14 +261,6 @@ VALUES
     ('Perm - Wavy', 'Dry cut on short - medium length hair', 200.00, '02:00:00'),
     ('Perm - Straight', 'Dry cut on short - medium length hair', 200.00, '02:00:00');
     -- add more treatments if you think necessary
-    
--- See all data from tables:
-SELECT * FROM clients;
-SELECT * FROM stylists;
-SELECT * FROM treatments;
-SELECT * FROM salon_info;
-SELECT * FROM opening_hours;
-SELECT * FROM appointments;
 
 -- insert data into appointments table by calling stored procedure created above:
 CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:00:00');
@@ -300,6 +300,13 @@ ORDER by id;
 SELECT * FROM after_cancellation;-- see the VIEW
 
 
+-- See all data from tables:
+SELECT * FROM clients;
+SELECT * FROM stylists;
+SELECT * FROM treatments;
+SELECT * FROM salon_info;
+SELECT * FROM opening_hours;
+SELECT * FROM appointments;
 
 -- need to create a stored procedure to delete appts - DONE
 
