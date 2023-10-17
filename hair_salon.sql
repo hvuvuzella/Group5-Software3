@@ -124,11 +124,21 @@ DELIMITER ;
 /* STORED PROCEDURE to cancel appointments: */
 
 DELIMITER //
-CREATE PROCEDURE CancelAppointment(
+CREATE PROCEDURE CancelAppointment( -- arguments for procedure when calling it:
 	IN a_appointment_id INT
 )
 BEGIN
-
+	-- check if appt exists:
+    DECLARE appointment_exists INT;
+    SELECT COUNT(*) INTO appointment_exists FROM appointments WHERE id = a_appointment_id;
+    
+    IF appointment_exists = 0 THEN
+		SIGNAL SQLSTATE 'APER4'
+		SET MESSAGE_TEXT ='Error: appointment cannot be deleted because it does not exist. Please try another appointment id';
+    ELSE
+		-- delete the appointment
+		DELETE FROM appointments WHERE id = a_appointment_id;
+	END IF;
 END;
 //
 DELIMITER ;
