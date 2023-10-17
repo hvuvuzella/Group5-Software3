@@ -149,8 +149,9 @@ DELIMITER ;
 
 INSERT INTO clients (first_name, last_name, mobile, email)
 VALUES
-    ('Jane', 'Smith', '07763518723', 'jane.smith@email.com');
-    -- please add 9 more rows of data
+    ('Jane', 'Smith', '07763518723', 'jane.smith@email.com'),
+    ('Helen', 'Vu', '07754896574', 'helen.vu@email.com');
+    -- please add 3 more rstylists
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
@@ -187,15 +188,35 @@ VALUES
     ('Perm - Straight', 'Dry cut on short - medium length hair', 200.00, '02:00:00');
     -- add more treatments if you think necessary
     
+-- See all data from tables:
+SELECT * FROM clients;
+SELECT * FROM stylists;
+SELECT * FROM treatments;
+SELECT * FROM salon_info;
+SELECT * FROM opening_hours;
+SELECT * FROM appointments;
+
 -- insert data into appointments table by calling stored procedure created above:
 CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:00:00');
+CALL InsertNewAppointment(2, 1, 2, '2023-11-02', '11:00:00');
 -- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
 -- Hopefully the Python API we build will insert data for us when end user "books" their appointment
 
--- need to create a stored procedure to delete appts
+-- delete appointmnents by calling stored procedure created above:
+SELECT * FROM appointments AS before_cancellation;
+CALL CancelAppointment(2);
+CREATE VIEW after_cancellation AS 
+SELECT * FROM appointments
+ORDER by id; 
 
--- need to create a stored procedure to update appts
+SELECT * FROM after_cancellation;-- see appoitnments table after cancelled appt
 
--- need to create a table for seeing appointment availability for each stylist?
+
+
+-- need to create a stored procedure to delete appts - DONE
+
+-- need to create a stored procedure to update appts - TO DO
+
+-- need to create a table for seeing appointment availability for each stylist? - TBC
     
