@@ -77,7 +77,7 @@ BEGIN
     FROM opening_hours
     WHERE day_of_week = DAYNAME(a_appt_date);  -- Use of in-built function DAYNAME() to extract the appt_date's day of the week, so it matches the opening_hours' day_of_week format
 
-	-- get treatment duration from services table:
+	-- get treatment duration from treatments table:
 	SELECT duration
     INTO treatment_duration
     FROM treatments
@@ -115,6 +115,31 @@ BEGIN
 	ELSE -- BUT, if any appointments are made outside opening hours anyway(see first IF condition), then throw error:
 		SIGNAL SQLSTATE 'APER3'
         SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it is not within salon opening times';
+	END IF;
+END;
+//
+DELIMITER ;
+
+
+/* STORED PROCEDURE to cancel appointments: */
+
+DELIMITER //
+CREATE PROCEDURE CancelAppointment( -- arguments for procedure when calling it:
+	IN a_appointment_id INT
+)
+BEGIN
+	-- check if appt exists:
+    DECLARE appointment_exists INT;
+    SELECT COUNT(*) INTO appointment_exists FROM appointments WHERE id = a_appointment_id;
+    
+    -- if appt does not exist, then throw error:
+    IF appointment_exists = 0 THEN
+		SIGNAL SQLSTATE 'APER4' -- New SQLSTATE code for error appt does not exist
+		SET MESSAGE_TEXT ='Error: appointment cannot be deleted because it does not exist. Please try another appointment id';
+    ELSE
+    
+		-- otherwise, if appointment does exist, then allow to delete data (i.e. cancel appointment):
+		DELETE FROM appointments WHERE id = a_appointment_id;
 	END IF;
 END;
 //
@@ -166,7 +191,7 @@ VALUES
 CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:00:00');
 -- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
--- Hopefully the Python API we build will do this part for us when end user "books" their appointment
+-- Hopefully the Python API we build will insert data for us when end user "books" their appointment
 
 -- need to create a stored procedure to delete appts
 
