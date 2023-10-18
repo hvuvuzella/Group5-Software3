@@ -234,6 +234,34 @@ END;
 //
 DELIMITER ;
 
+/* STORED PROCEDURE TO SEE ALL OF A STYLIST'S SCHEDULED APPOINTMENTS FOR A GIVEN DAY, 
+displaying client's full name, mobie, the treatment they are having and their appt start and end time:  */
+
+DELIMITER //
+CREATE PROCEDURE GetStylistSchedule( -- arguments for procedure when calling it:
+    IN stylist_id INT,
+    IN appointment_date DATE
+)
+BEGIN
+	-- select relevant data from appointments to display
+    SELECT 
+		a.id, 
+        c.first_name AS client_first_name, 
+        c.last_name AS client_last_name, 
+        c.mobile AS client_mobile, 
+        t.name AS treatment_name, 
+        a.appt_time, ADDTIME(a.appt_time, t.duration) AS appt_end_time -- calculate appt end time
+	-- Join the 'appointments' table with the 'clients' ant 'treatments' tables
+    FROM appointments AS a
+    JOIN clients AS c ON a.client_id = c.id
+    JOIN treatments AS t ON a.treatment_id = t.id
+    WHERE a.stylist_id = stylist_id
+    AND a.appt_date = appointment_date;
+END;
+//
+DELIMITER ;
+
+
 
 -- POPULATE TABLES WITH DATA:
 
@@ -330,8 +358,6 @@ ORDER BY id;
 SELECT * FROM after_update_appt; 
 
 
-
-
 /* CANCEL(DELETE) EXISTING APPOINTMENTS - delete existing data in appointments table by calling stored procedure created above,
 in the format: CALL CancelAppointment(appointment_id); */
 
@@ -352,6 +378,11 @@ ORDER by id;
 SELECT * FROM after_cancellation;-- see the VIEW
 
 
+/* SEE ALL OF A STYLIST'S SCHEDULED APPOINTMENTS FOR A GIVEN DAY */
+CALL GetStylistSchedule(1, '2023-11-01'); -- has two appts
+CALL GetStylistSchedule(2, '2023-11-03'); -- has two appts
+CALL GetStylistSchedule(2, '2023-11-02'); -- has no appts for this day, so result is empty
+
 -- See all data from tables:
 SELECT * FROM clients;
 SELECT * FROM stylists;
@@ -360,6 +391,4 @@ SELECT * FROM salon_info;
 SELECT * FROM opening_hours;
 SELECT * FROM appointments;
 
-
--- need to create a table for seeing appointment availability for each stylist? - TBC
     
