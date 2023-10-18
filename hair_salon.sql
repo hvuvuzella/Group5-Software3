@@ -55,7 +55,7 @@ CREATE TABLE appointments (
 	FOREIGN KEY (treatment_id) REFERENCES treatments(id)
 );
 
-/* STORED PROCEDURE to insert new appointments: new appointments can only be made if they are wtihin the salon
+/* STORED PROCEDURE TO ADD NEW APPOINTMENTS: new appointments can only be made if they are wtihin the salon
 opening hours, if they do not run past salon closing time, and if they do no clash with an already existing appointment */
 DELIMITER //
 CREATE PROCEDURE InsertNewAppointment(  -- arguments for procedure when calling it:
@@ -121,71 +121,87 @@ END;
 DELIMITER ;
 
 
-/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG APPOINTMENTS*/
+/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG APPOINTMENTS: appointments can only be changed if they exist, if they are wtihin the salon
+opening hours, if they do not run past salon closing time, and if they do no clash with any other existing appointments */
 
 DELIMITER //
-CREATE PROCEDURE UpdateAppointmentDateTime(
+CREATE PROCEDURE UpdateAppointment( -- arguments for procedure when calling it:
     IN a_appointment_id INT,
-    IN a_new_appt_date DATE,
-    IN a_new_appt_time TIME
+    IN a_client_id INT,
+    IN a_stylist_id INT,
+    IN a_treatment_id INT,
+    IN a_appt_date DATE,
+    IN a_appt_time TIME
 )
-BEGIN
-
+BEGIN -- declare local variables:
     DECLARE appointment_exists INT;
     DECLARE new_appt_end_time TIME;
-	DECLARE new_opening_time TIME;
-	DECLARE new_closing_time TIME;
+	DECLARE b_opening_time TIME;
+	DECLARE b_closing_time TIME;
+    DECLARE treatment_duration TIME;
     
-	-- Check if the appointment exists:
-    SELECT COUNT(*) INTO appointment_exists FROM appointments WHERE id = a_appointment_id;
+	-- get salon opening hours for the day of week that updated appointment would fall on:
+	SELECT opening_time, closing_time
+	INTO b_opening_time, b_closing_time
+	FROM opening_hours
+	WHERE day_of_week = DAYNAME(a_appt_date);
     
-    -- If the appointment does not exist, throw an error:
+	-- get treatment duration for the appointment being updated:
+	SELECT duration
+    INTO treatment_duration
+    FROM treatments
+    WHERE id = (SELECT treatment_id FROM appointments WHERE id = a_appointment_id);
+    
+	-- Calculate the new appointment end time, by adding duration of treatment to updated appointment start time:
+    SET new_appt_end_time = ADDTIME(a_appt_time, treatment_duration);
+    
+	-- Check if the appointment exists by counting how many appts there are for the appointment_id in question:
+    SELECT COUNT(*) 
+    INTO appointment_exists 
+    FROM appointments 
+    WHERE id = a_appointment_id;
+    
+    -- If the appointment does not exist (count returned 0 rows of data), then throw an error:
     IF appointment_exists = 0 THEN
-        SIGNAL SQLSTATE 'UPER1' -- Custom SQLSTATE code for appointment not found
+        SIGNAL SQLSTATE 'UPAT1' -- Custom SQLSTATE code for appointment not found
         SET MESSAGE_TEXT = 'Error: Appointment not found. Please provide a valid appointment ID';
     ELSE
-        -- Calculate the new appointment end time based on the provided date and time:
-        SELECT ADDTIME(a_new_appt_time, (SELECT duration FROM treatments WHERE id = treatment_id))
-        INTO new_appt_end_time
-        FROM appointments
-        WHERE id = a_appointment_id;
-
         -- Check if the new appointment time falls within salon opening hours:
-        SELECT opening_time, closing_time
-        INTO new_opening_time, new_closing_time
-        FROM opening_hours
-        WHERE day_of_week = DAYNAME(a_new_appt_date);
-
-        IF new_opening_time IS NOT NULL AND new_closing_time IS NOT NULL AND
-           TIME(a_new_appt_time) BETWEEN new_opening_time AND new_closing_time THEN
+        IF b_opening_time IS NOT NULL AND b_closing_time IS NOT NULL AND -- if salon is open
+           TIME(a_appt_time) BETWEEN b_opening_time AND b_closing_time THEN -- and new appt time is during open hours,
            
-           -- Check if new appointment runs over salon closing time:
-			IF ADDTIME(a_new_appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)) > new_closing_time THEN
-                SIGNAL SQLSTATE 'APER1' -- New SQLSTATE code for error in appt end time
+           -- then check if the new appointment runs over salon closing time:
+			IF new_appt_end_time > b_closing_time THEN
+                SIGNAL SQLSTATE 'UPAT2' -- New SQLSTATE code for error in appt end time
                 SET MESSAGE_TEXT = 'Error: this appointment cannot be made because it will run over salon closing time';
 			ELSE
-				-- Check if the new appointment time clashes with the stylist's existing appointments:
+				-- Check if the new appointment clashes with any other existing appointments:
 				IF EXISTS (
 					SELECT 1
 					FROM appointments
-					WHERE stylist_id = (SELECT stylist_id FROM appointments WHERE id = a_appointment_id)
-					AND appt_date = a_new_appt_date
+					WHERE stylist_id = a_stylist_id
+                    AND appt_date = a_appt_date
 					AND (
-						(a_new_appt_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
-						OR (new_appt_end_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+						(a_appt_time BETWEEN appt_time AND ADDTIME(appt_time, treatment_duration))
+						OR (new_appt_end_time BETWEEN appt_time AND ADDTIME(appt_time, treatment_duration))
 					)
 				) THEN
-					SIGNAL SQLSTATE 'UPER2' -- Custom SQLSTATE code for appointment clash with another appointment
+					SIGNAL SQLSTATE 'UPAT3' -- Custom SQLSTATE code for appointment clash with another appointment
 					SET MESSAGE_TEXT = 'Error: The updated appointment clashes with an existing appointment. Please choose another time.';
 				ELSE
-					-- If no violations are found, update the appointment date and time:
+					-- If no violations are found, all to update appointment data
 					UPDATE appointments
-					SET appt_date = a_new_appt_date, appt_time = a_new_appt_time
+					SET id = a_appointment_id,
+						client_id = a_client_id,
+						stylist_id = a_stylist_id,
+                        treatment_id = a_treatment_id,
+						appt_date = a_appt_date,
+						appt_time = a_appt_time
 					WHERE id = a_appointment_id;
 				END IF;
 			END IF;
 		ELSE
-			SIGNAL SQLSTATE 'UPER3' -- Custom SQLSTATE code for appointment outside opening hours
+			SIGNAL SQLSTATE 'UPAT4' -- Custom SQLSTATE code for appointment outside opening hours
 			SET MESSAGE_TEXT = 'Error: The updated appointment is not within salon opening hours.';
         END IF;
     END IF;
@@ -194,7 +210,7 @@ END;
 DELIMITER ;
 
 
-/* STORED PROCEDURE to cancel appointments: */
+/* STORED PROCEDURE TO CANCEL APPOINTMENTS: appointments can only be cancelled if the appointment exists in the first place*/
 
 DELIMITER //
 CREATE PROCEDURE CancelAppointment( -- arguments for procedure when calling it:
@@ -218,6 +234,7 @@ END;
 //
 DELIMITER ;
 
+
 -- POPULATE TABLES WITH DATA:
 
 INSERT INTO clients (first_name, last_name, mobile, email)
@@ -232,20 +249,18 @@ VALUES
     ('Jimi', 'Hendrix', '07958844687', 'jimi.hendrix@email.com'),
     ('David', 'Bowie', '07845698715', 'david.bowie@egmail.com'),
     ('Lana', 'Del Rey', '07546668745', 'lana.del.rey@email.com');
-    -- please add 10 clients total (or more)
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
 	('Erikca', 'Tatchyn', '0798865432'),
     ('Hannah', 'Magee', '0774566874'),
-    ('Kate', 'Losyeva', '0779654478'),
-    ('Inna', 'Pospiech', '07775899654');
+    ('Kate', 'Losyeva', '0779654478');
     -- no more stylists needed for this table
     
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
 	('THE CUT', '0208988652', 'info@thecut.co.uk', '52 Archer Street, Soho, London, W1 4HG');
-    -- no more data needed for this table
+	-- no more data needed for this table
 
 INSERT INTO opening_hours (day_of_week, opening_time, closing_time)
 VALUES
@@ -270,54 +285,68 @@ VALUES
     ('Highlights', 'Whole head of highlights', 120.00, '01:45:00'),
     ('Perm - Wavy', 'Dry cut on short - medium length hair', 200.00, '02:00:00'),
     ('Perm - Straight', 'Dry cut on short - medium length hair', 200.00, '02:00:00');
-    -- add more treatments if you think necessary
 
--- INSERT(add) new appointments - insert data into appointments table by calling stored procedure created above,
--- in the format: CALL InsertNewAppointment(client_id, stylist_id, treatment_id, appt_date, appt_time);
+/* INSERT(ADD) NEW APPOINTMENTS - insert data into appointments table by calling stored procedure created above,
+in the format: CALL InsertNewAppointment(client_id, stylist_id, treatment_id, appt_date, appt_time);  */
 CALL InsertNewAppointment(1, 1, 1, '2023-11-01', '09:00:00');
-CALL InsertNewAppointment(2, 2, 3, '2023-11-01', '11:00:00');
-CALL InsertNewAppointment(3, 3, 5, '2023-11-02', '13:30:00');
-CALL InsertNewAppointment(4, 4, 6, '2023-11-02', '12:00:00');
-CALL InsertNewAppointment(5, 1, 1, '2023-11-03', '17:00:00');
+CALL InsertNewAppointment(2, 1, 3, '2023-11-01', '11:00:00');
+CALL InsertNewAppointment(3, 1, 5, '2023-11-02', '13:30:00');
+CALL InsertNewAppointment(4, 1, 6, '2023-11-02', '11:00:00');
+CALL InsertNewAppointment(5, 2, 7, '2023-11-03', '14:00:00');
 CALL InsertNewAppointment(6, 2, 10, '2023-11-03', '16:00:00');
 CALL InsertNewAppointment(7, 3, 9, '2023-11-04', '10:30:00');
-CALL InsertNewAppointment(8, 4, 4, '2023-11-05', '14:00:00');
-CALL InsertNewAppointment(9, 1, 7, '2023-11-08', '15:30:00');
-CALL InsertNewAppointment(10, 2, 8, '2023-11-09', '12:30:00');
+CALL InsertNewAppointment(8, 3, 4, '2023-11-05', '14:00:00');
+CALL InsertNewAppointment(9, 2, 7, '2023-11-08', '15:30:00');
+CALL InsertNewAppointment(10, 3, 8, '2023-11-09', '12:30:00');
+-- the below lines will throw errors as conditions/constraints are violated. Uncomment to try:
 -- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
--- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:30:00'); -- check stored procedure works (uncomment to try): clashes with an existing appt
--- Hopefully the Python API we build will insert data for us when end user "books" their appointment
+-- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:15:00'); -- clashes with an existing appt
+-- CALL InsertNewAppointment(1, 2, 7, '2023-11-06', '12:30:00'); -- this is a Monday, salon isn't open on Mondays
 
 
--- UPDATE exisitng appointments (date & time) - update existing data in appointments table by calling stored procedure created above,
--- in the format: CALL UpdateAppointmentDateTime(appointment_id, new_appt_date, new_appt_time);
-CREATE VIEW before_update_appt AS -- create a VIEW to see all appts BEFORE cancellation
+
+/* UPDATE EXISTING APPOINTMENTS - update existing data in appointments table by calling stored procedure created above,
+in the format: CALL UpdateAppointmentDateTime(appointment_id, client_id, stylist_id, treatment_id, appt_date, appt_time); */
+
+-- see all appts BEFORE updating appt:
+CREATE VIEW before_update_appt AS
 SELECT * FROM appointments
 ORDER BY id;
 SELECT * FROM before_update_appt; 
 
--- CALL UpdateAppointmentDateTime(1, '2023-11-03', '10:30:00');
--- CALL UpdateAppointmentDateTime(3, '2023-11-04', '10:45:00'); -- check stored procedure works (uncomment to try): clashes with another existing appt for same stylist
--- CALL UpdateAppointmentDateTime(5, '2023-11-06', '14:00:00'); -- check stored procedure works (uncomment to try): appt not within salon opening hours
--- CALL UpdateAppointmentDateTime(6, '2023-11-04', '17:45:00'); -- check stored procedure works (uncomment to try): appt runs over past salon closing time
+-- now update appointments:
+CALL UpdateAppointment(1, 1, 1, 1, '2023-11-01', '09:30:00'); 
+-- the below lines will throw errors as conditions/constraints are violated. Uncomment to try:
+-- CALL UpdateAppointment(2, 2, 1, 3, '2023-11-01', '11:05:00');  -- clashes with another existing appt for that day with that stylist
+-- CALL UpdateAppointment(3, 3, 1, 5, '2023-11-02', '14:15:00'); -- clashes with another existing appt for that day with that stylist
+-- CALL UpdateAppointment(5, 5, 1, 7, '2023-11-02', '13:15:00'); -- clashes with another existing appt for that day with that stylist
+-- CALL UpdateAppointment(5, 5, 2, 1, '2023-11-06', '14:00:00'); -- appt not within salon opening hours
+-- CALL UpdateAppointment(6, 6, 2, 10, '2023-11-04', '17:45:00'); -- appt runs over past salon closing time
 
-CREATE VIEW after_update_appt AS -- create a VIEW to see all appts BEFORE cancellation
+-- finally, see all appts AFTER updating appt:
+CREATE VIEW after_update_appt AS 
 SELECT * FROM appointments
 ORDER BY id;
 SELECT * FROM after_update_appt; 
 
 
--- CANCEL(delete) existing appointmnents - delete existing data in appointments table by calling stored procedure created above,
--- in the format: CALL CancelAppointment(appointment_id);
-CREATE VIEW before_cancellation AS -- create a VIEW to see all appts BEFORE cancellation
+
+
+/* CANCEL(DELETE) EXISTING APPOINTMENTS - delete existing data in appointments table by calling stored procedure created above,
+in the format: CALL CancelAppointment(appointment_id); */
+
+-- see all appts BEFORE cancellation
+CREATE VIEW before_cancellation AS
 SELECT * FROM appointments
 ORDER BY id;
 SELECT * FROM before_cancellation; -- see the VIEW
 
-CALL CancelAppointment(2);
--- CALL CancelAppointment(50);  -- check stored procedure works (uncomment to try): appt does not exist
+CALL CancelAppointment(10);
+-- the below line will throw an error as conditions/constraints are violated. Uncomment to try:
+-- CALL CancelAppointment(50); -- appt does not exist
 
-CREATE VIEW after_cancellation AS -- -- create a VIEW to see all appts AFTER cancellation
+-- see all appts AFTER cancellation
+CREATE VIEW after_cancellation AS
 SELECT * FROM appointments
 ORDER by id; 
 SELECT * FROM after_cancellation;-- see the VIEW
@@ -331,9 +360,6 @@ SELECT * FROM salon_info;
 SELECT * FROM opening_hours;
 SELECT * FROM appointments;
 
--- need to create a stored procedure to delete appts - DONE
-
--- need to create a stored procedure to update appts - DONE
 
 -- need to create a table for seeing appointment availability for each stylist? - TBC
     
