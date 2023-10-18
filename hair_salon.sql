@@ -121,7 +121,7 @@ END;
 DELIMITER ;
 
 
-/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG APPOINTMENTS: appointments can only be changed if they exist, if they are wtihin the salon
+/* STORED PROCEDURE TO UPDATE/CHANGE EXISTING APPOINTMENTS: appointments can only be changed if they exist, if they are wtihin the salon
 opening hours, if they do not run past salon closing time, and if they do no clash with any other existing appointments */
 
 DELIMITER //
@@ -252,7 +252,7 @@ VALUES
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
-	('Erikca', 'Tatchyn', '0798865432'),
+	('Erika', 'Tatchyn', '0798865432'),
     ('Hannah', 'Magee', '0774566874'),
     ('Kate', 'Losyeva', '0779654478');
     -- no more stylists needed for this table
