@@ -85,43 +85,54 @@ BEGIN
     
     -- get calculated appointment end time, by adding duration of treatment to appointment start time:
 	SET appointment_end_time = ADDTIME(a_appt_time, treatment_duration);
+    
+    -- check: if client does not exist, then throw error:
+    IF a_client_id IS NOT NULL AND NOT EXISTS (
+        SELECT 1
+        FROM clients
+        WHERE id = a_client_id
+    ) THEN
+        SIGNAL SQLSTATE 'APER1' -- New SQLSTATE code for client not found
+        SET MESSAGE_TEXT = 'Error: Client id does not exist; enter a valid id, or go back and add new client details to the clients table first.';
+    ELSE    
 
-    IF b_opening_time IS NOT NULL AND b_closing_time IS NOT NULL AND -- if salon is open,
-		TIME(a_appt_time) BETWEEN b_opening_time AND b_closing_time THEN -- and appt time is during opening hours,
-        
-		IF appointment_end_time > b_closing_time THEN -- then check if appointment runs over salon closing time. If so, throw error:
-			SIGNAL SQLSTATE 'APER1' -- New SQLSTATE code for error in appt end time
-			SET MESSAGE_TEXT = 'Error: this appointment cannot be made because it will run over salon closing time';
-		ELSE
+		IF b_opening_time IS NOT NULL AND b_closing_time IS NOT NULL AND -- if salon is open,
+			TIME(a_appt_time) BETWEEN b_opening_time AND b_closing_time THEN -- and appt time is during opening hours,
 			
-			IF EXISTS ( -- if not, then check if appointment clashes with any existing appointments the hair stylist already has. If so, throw error:
-				SELECT 1
-				FROM appointments
-				WHERE stylist_id = a_stylist_id
-				AND appt_date = a_appt_date
-				AND (
-					(a_appt_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
-					OR (appointment_end_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
-				)
-			) THEN
-				SIGNAL SQLSTATE 'APER2' -- New SQLSTATE code for appointment clashing with another appt
-				SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it clashes with an already exisiting appointment. Please choose another time';
-            ELSE
-				-- If no violations are found, then allow to insert data
-				INSERT INTO appointments (client_id, stylist_id, treatment_id, appt_date, appt_time)
-                VALUES (a_client_id, a_stylist_id, a_treatment_id, a_appt_date, a_appt_time);
+			IF appointment_end_time > b_closing_time THEN -- then check if appointment runs over salon closing time. If so, throw error:
+				SIGNAL SQLSTATE 'APER2' -- New SQLSTATE code for error in appt end time
+				SET MESSAGE_TEXT = 'Error: this appointment cannot be made because it will run over salon closing time';
+			ELSE
+				
+				IF EXISTS ( -- if not, then check if appointment clashes with any existing appointments the hair stylist already has. If so, throw error:
+					SELECT 1
+					FROM appointments
+					WHERE stylist_id = a_stylist_id
+					AND appt_date = a_appt_date
+					AND (
+						(a_appt_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+						OR (appointment_end_time BETWEEN appt_time AND ADDTIME(appt_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+					)
+				) THEN
+					SIGNAL SQLSTATE 'APER3' -- New SQLSTATE code for appointment clashing with another appt
+					SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it clashes with an already exisiting appointment. Please choose another time';
+				ELSE
+					-- If no violations are found, then allow to insert data
+					INSERT INTO appointments (client_id, stylist_id, treatment_id, appt_date, appt_time)
+					VALUES (a_client_id, a_stylist_id, a_treatment_id, a_appt_date, a_appt_time);
+				END IF;
 			END IF;
+		ELSE -- BUT, if any appointments are made outside opening hours anyway(see first IF condition), then throw error:
+			SIGNAL SQLSTATE 'APER4'
+			SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it is not within salon opening times';
 		END IF;
-	ELSE -- BUT, if any appointments are made outside opening hours anyway(see first IF condition), then throw error:
-		SIGNAL SQLSTATE 'APER3'
-        SET MESSAGE_TEXT = 'Error: This appointment cannot be made because it is not within salon opening times';
 	END IF;
 END;
 //
 DELIMITER ;
 
 
-/* STORED PROCEDURE TO UPDATE/CHANGE EXISTING APPOINTMENTS: appointments can only be changed if they exist, if they are wtihin the salon
+/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG APPOINTMENTS: appointments can only be changed if they exist, if they are wtihin the salon
 opening hours, if they do not run past salon closing time, and if they do no clash with any other existing appointments */
 
 DELIMITER //
@@ -189,7 +200,7 @@ BEGIN -- declare local variables:
 					SIGNAL SQLSTATE 'UPAT3' -- Custom SQLSTATE code for appointment clash with another appointment
 					SET MESSAGE_TEXT = 'Error: The updated appointment clashes with an existing appointment. Please choose another time.';
 				ELSE
-					-- If no violations are found, allow to update appointment data
+					-- If no violations are found, all to update appointment data
 					UPDATE appointments
 					SET id = a_appointment_id,
 						client_id = a_client_id,
@@ -280,7 +291,7 @@ VALUES
     
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
-	('Erika', 'Tatchyn', '0798865432'),
+	('Erikca', 'Tatchyn', '0798865432'),
     ('Hannah', 'Magee', '0774566874'),
     ('Kate', 'Losyeva', '0779654478');
     -- no more stylists needed for this table
@@ -327,9 +338,12 @@ CALL InsertNewAppointment(8, 3, 4, '2023-11-05', '14:00:00');
 CALL InsertNewAppointment(9, 2, 7, '2023-11-08', '15:30:00');
 CALL InsertNewAppointment(10, 3, 8, '2023-11-09', '12:30:00');
 -- the below lines will throw errors as conditions/constraints are violated. Uncomment to try:
--- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '09:00:00'); -- check stored procedure works (uncomment to try): outside salon opening hours
+-- CALL InsertNewAppointment(100, 2, 1, '2023-11-09', '16:00:00'); -- client id does not exist, either enter a valid id or create new client
+-- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '20:00:00'); -- outside salon opening hours
+-- CALL InsertNewAppointment(1, 1, 5, '2023-10-31', '07:00:00'); -- appt time is before the salon opens
 -- CALL InsertNewAppointment(1, 1, 5, '2023-11-01', '09:15:00'); -- clashes with an existing appt
 -- CALL InsertNewAppointment(1, 2, 7, '2023-11-06', '12:30:00'); -- this is a Monday, salon isn't open on Mondays
+-- CALL InsertNewAppointment(1, 2, 7, '2023-11-03', '17:55:00'); -- appt runs over salon close time
 
 
 
