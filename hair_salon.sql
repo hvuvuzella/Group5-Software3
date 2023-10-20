@@ -189,7 +189,7 @@ BEGIN -- declare local variables:
 					SIGNAL SQLSTATE 'UPAT3' -- Custom SQLSTATE code for appointment clash with another appointment
 					SET MESSAGE_TEXT = 'Error: The updated appointment clashes with an existing appointment. Please choose another time.';
 				ELSE
-					-- If no violations are found, allow to update appointment data
+					-- If no violations are found, allow to update appointment da   sta
 					UPDATE appointments
 					SET id = a_appointment_id,
 						client_id = a_client_id,
