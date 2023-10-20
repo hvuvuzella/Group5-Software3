@@ -176,6 +176,30 @@ def get_stylist_schedule(stylist_id, booking_date):
             print("DB connection is closed")
     return {"booked slots": not_available_times}
 
+
+def get_all_treatments():
+    try:
+        db_name = 'hair_salon'
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()
+        print(f"Connected to database {db_name}")
+
+        query = """SELECT id, name FROM treatments"""
+
+        cur.execute(query)
+        results = cur.fetchall()
+
+        for i in results:
+            print(i)
+
+    except Exception as exc:
+        print(exc)
+
+    finally:
+        if db_connection:
+            db_connection.close()
+
+
 def main():
     add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
     add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
