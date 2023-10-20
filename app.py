@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request #  imports specific objects and functions from the Flask web framework
-from db_utils import get_stylist_schedule, add_new_customer # imports two specific functions from a module db_utils
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking # imports two specific functions from a module db_utils
 
 
 # Define a Flask web application
@@ -31,6 +31,21 @@ def add_client():
     )
 
     return jsonify(client_id)
+
+
+# Creating a new appointment
+@app.route('/add_new_booking', methods=['POST'])
+def add_appt():
+    booking = request.get_json()
+    booking_id = add_new_booking(
+        customer_id=booking['customer_id'],
+        stylist_id=booking['stylist_id'],
+        treatment_id=booking['treatment_id'],
+        booking_date=booking['booking_date'],
+        booking_time=booking['booking_time']
+    )
+
+    return jsonify(booking_id)
 
 
 if __name__ == '__main__':
