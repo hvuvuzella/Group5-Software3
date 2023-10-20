@@ -40,13 +40,18 @@ def run():
         else:
             print(f"You have the following slots booked: {', '.join(stylist_schedule['booked slots'])}")
     if stylist_or_customer == "c":
+        registered_user = input("Are you a registered user?(y/n)")
+        if registered_user == "n":
+            client_name = input("To continue with your appointments you will be asked to register. Enter your first name")
+            client_last_name = (input("Enter your last name"))
+            client_mobile = (input("Enter your mobile number"))
+            client_email = (input("Enter your email"))
+            client_id = add_client(client_name, client_last_name, client_mobile, client_email)
+            print(
+                f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
+        elif registered_user == "y":
+            pass
 
-        client_name = input("To continue with your appointments you will be asked to register. Enter your first name")
-        client_last_name = (input("Enter your last name"))
-        client_mobile = (input("Enter your mobile number"))
-        client_email = (input("Enter your email"))
-        client_id = add_client(client_name, client_last_name, client_mobile, client_email)
-        print(f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
 
 
 if __name__ == '__main__':
