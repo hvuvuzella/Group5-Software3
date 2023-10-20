@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from db_utils import get_stylist_schedule, add_new_client
+from db_utils import add_new_client
 
 app = Flask(__name__)
 
