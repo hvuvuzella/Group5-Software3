@@ -1,7 +1,7 @@
-import requests
-import json
+import requests # import module for requesting API
+import json # import module to work with json data
 
-# Sending request to endpoint to get stylist schedule
+# Define a function that sends request to the endpoint to get stylist schedule for specific date
 def get_stylist_schedule_by_date(stylist, date):
     result = requests.get(
         'http://127.0.0.1:5000/schedule/{}/{}'.format(stylist, date),
@@ -9,7 +9,7 @@ def get_stylist_schedule_by_date(stylist, date):
     )
     return result.json()
 
-# Sending request to endpoint to get add new user
+# Define a function that send request to endpoint to add new client by sending an HTTP POST request with client information
 def add_client(first_name, last_name, mobile, email):
     client_info = {
         "first_name": first_name,
@@ -30,6 +30,8 @@ def add_client(first_name, last_name, mobile, email):
 def run():
     stylist_or_customer = input("Welcome to our hair salon where you can get everything you need for your hair.\nPrint "
                                 "s if you want to log in as a stylist and c if you want to log in as a customer.")
+    
+    # If the user logs in as a stylist, they can check their schedule for a specific date
     if stylist_or_customer == "s":
         stylist_to_check_schedule = input("Type 1 if you want to check schedule for Erika Tatchyn,"
                                           " 2 for Hannah Magee and 3 for Kate Losyeva.")
@@ -39,6 +41,8 @@ def run():
             print("You have no appointments booked")
         else:
             print(f"You have the following slots booked: {', '.join(stylist_schedule['booked slots'])}")
+    
+    # If the user logs in as a customer, they are prompted to register by providing their information
     if stylist_or_customer == "c":
         register_agree = input("To continue with your appointments you will be asked to register(y/n)")
         if register_agree == "y":
