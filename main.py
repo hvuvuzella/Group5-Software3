@@ -40,12 +40,11 @@ def run():
         else:
             print(f"You have the following slots booked: {', '.join(stylist_schedule['booked slots'])}")
     if stylist_or_customer == "c":
-        register_agree = input("To continue with your appointments you will be asked to register(y/n)")
-        if register_agree == "y":
-            client_name = (input("Enter your first name"))
-            client_last_name = (input("Enter your last name"))
-            client_mobile = (input("Enter your mobile number"))
-            client_email = (input("Enter your email"))
+
+        client_name = input("To continue with your appointments you will be asked to register. Enter your first name")
+        client_last_name = (input("Enter your last name"))
+        client_mobile = (input("Enter your mobile number"))
+        client_email = (input("Enter your email"))
         client_id = add_client(client_name, client_last_name, client_mobile, client_email)
         print(f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
 
