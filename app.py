@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from db_utils import get_stylist_schedule, add_new_customer
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking
 
 app = Flask(__name__)
 
@@ -24,6 +24,21 @@ def add_client():
     )
 
     return jsonify(client_id)
+
+
+# Creating a new appointment
+@app.route('/add_new_booking', methods=['POST'])
+def add_appt():
+    booking = request.get_json()
+    booking_id = add_new_booking(
+        customer_id=booking['customer_id'],
+        stylist_id=booking['stylist_id'],
+        treatment_id=booking['treatment_id'],
+        booking_date=booking['booking_date'],
+        booking_time=booking['booking_time']
+    )
+
+    return jsonify(booking_id)
 
 
 if __name__ == '__main__':

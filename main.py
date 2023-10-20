@@ -1,5 +1,6 @@
 import requests
 import json
+from db_utils import get_all_treatments
 
 # Sending request to endpoint to get stylist schedule
 def get_stylist_schedule_by_date(stylist, date):
@@ -25,6 +26,26 @@ def add_client(first_name, last_name, mobile, email):
     )
 
     return result.json()
+
+
+# Sending request to endpoint to add new appointment
+def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
+    booking = {
+        "customer_id": customer_id,
+        "stylist_id": stylist_id,
+        "treatment_id": treatment_id,
+        "booking_date": booking_date,
+        "booking_time": booking_time
+    }
+
+    result = requests.post(
+        'http://127.0.0.1:5000/add_new_booking',
+        headers={'content-type': 'application/json'},
+        data=json.dumps(booking)
+    )
+
+    return result.json()
+
 
 # Main function that runs all the requests depending on user's choice
 def run():
