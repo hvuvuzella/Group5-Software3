@@ -83,7 +83,7 @@ BEGIN
     FROM treatments
     WHERE id = a_treatment_id;
     
-    -- add booking start time and the duration of treatment to work out what time the booking will finish:
+    -- Add booking start time and the duration of treatment to work out what time the booking will finish:
 	SET booking_time_finish = ADDTIME(a_booking_time, treatment_duration);
     
     -- check: if customer does not exist, then throw error:
