@@ -351,10 +351,11 @@ CALL AddNewBooking(10, 3, 8, '2023-11-09', '12:30:00');
 in the format: CALL UpdateBooking(booking_id, customer_id, stylist_id, treatment_id, booking_date, booking_time); */
 
 -- see all bookings BEFORE updating booking:
-CREATE VIEW before_update_booking AS
+
+CREATE VIEW booking_list_by_id AS
 SELECT * FROM bookings
 ORDER BY id;
-SELECT * FROM before_update_booking; 
+SELECT * FROM booking_list_by_id; 
 
 -- now update bookings:
 CALL UpdateBooking(1, 1, 1, 1, '2023-11-01', '09:30:00'); 
@@ -366,30 +367,21 @@ CALL UpdateBooking(1, 1, 1, 1, '2023-11-01', '09:30:00');
 -- CALL UpdateBooking(6, 6, 2, 10, '2023-11-04', '17:45:00'); -- booking will run over close time
 
 -- finally, see all bookings AFTER updating booking:
-CREATE VIEW after_update_booking AS 
-SELECT * FROM bookings
-ORDER BY id;
-SELECT * FROM after_update_booking; 
+SELECT * FROM booking_list_by_id; 
 
 
 /* CANCEL(DELETE) EXISTING BOOKINGS - delete existing data in bookings table by calling stored procedure created above,
 in the format: CALL CancelBooking(booking_id); */
 
 -- see all bookings BEFORE cancellation
-CREATE VIEW before_cancellation AS
-SELECT * FROM bookings
-ORDER BY id;
-SELECT * FROM before_cancellation; -- see the VIEW
+SELECT * FROM booking_list_by_id; -- see the VIEW
 
 CALL CancelBooking(10);
 -- These queries underneath will not work as they fail coniditions set in procedure. Uncomment to try:
 -- CALL CancelBooking(50); -- booking does not exist
 
 -- see all bookings AFTER cancellation
-CREATE VIEW after_cancellation AS
-SELECT * FROM bookings
-ORDER by id; 
-SELECT * FROM after_cancellation;-- see the VIEW
+SELECT * FROM booking_list_by_id;-- see the VIEW
 
 
 /* SEE ALL OF A STYLIST'S SCHEDULED BOOKINGS FOR A GIVEN DAY */
