@@ -48,6 +48,8 @@ def add_new_customer(first_name, last_name, mobile, email):
             db_connection.close()
             print("DB connection is closed")
 
+    return {"customer_id": customer_id}
+
 
 def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
     try:
@@ -82,6 +84,8 @@ def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
+
+    return {"customer_id": customer_id}
 
 
 def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_date, booking_time):
