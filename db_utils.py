@@ -176,10 +176,18 @@ def get_stylist_schedule(stylist_id, booking_date):
                 print(row)
         else:
             print("No bookings found for the given date.")
-        not_available_times = []
+        stylist_bookings = []
         for result in results:
             for appointment in result.fetchall():
-                not_available_times.append(f'{appointment[5]} - {appointment[6]}')
+                stylist_bookings.append(
+                    {
+                        "name": appointment[1],
+                        "last_name": appointment[2],
+                        "phone": appointment[3],
+                        "treatment": appointment[4],
+                        "time": f'{str(appointment[5])} - {str(appointment[6])}'
+                    }
+                )
     except Exception:
         raise DbConnectionError("Failed to read data from database")
 
@@ -187,7 +195,8 @@ def get_stylist_schedule(stylist_id, booking_date):
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
-    return {"booked slots": not_available_times}
+    return stylist_bookings
+
 
 # function for getting user bookings from database
 def show_user_appointments(first_name, last_name):
@@ -216,12 +225,13 @@ def show_user_appointments(first_name, last_name):
             print("DB connection is closed")
 
     return new_list
+
 def main():
-    # add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
-    # add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
-    # update_booking(11, 11, 3, 3, '2023-12-06', '12:00:00')
-    # cancel_booking(11)
-    # get_stylist_schedule(1, '2023-11-01')
+    add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
+    add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
+    update_booking(11, 11, 3, 3, '2023-12-06', '12:00:00')
+    cancel_booking(11)
+    get_stylist_schedule(1, '2023-11-01')
     # show_user_appointments('Michael', 'Jackson')
 
 
