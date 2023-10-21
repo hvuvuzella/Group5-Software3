@@ -5,7 +5,7 @@ from config import USER, PASSWORD, HOST
 
 class DbConnectionError(Exception):
     pass
-
+# changing user appointments into the list of dictionaries for easier handling
 def booking_change(appointments):
     bookings = []
     for app in appointments:
@@ -189,6 +189,7 @@ def get_stylist_schedule(stylist_id, booking_date):
             print("DB connection is closed")
     return {"booked slots": not_available_times}
 
+# function for getting user bookings from database
 def show_user_appointments(first_name, last_name):
     try:
         db_name = 'hair_salon'
@@ -196,7 +197,7 @@ def show_user_appointments(first_name, last_name):
         cursor = db_connection.cursor()
         print(f'Connected to database: {db_name}')
 
-        # execute query
+        # execute query for getting all the bookings
         select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
                         b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
                         WHERE  c.first_name = '{}' AND c.last_name = '{}'""".format(first_name, last_name))

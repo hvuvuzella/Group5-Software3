@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from db_utils import get_stylist_schedule, add_new_customer, show_user_appointments
-import json
 
 app = Flask(__name__)
 
