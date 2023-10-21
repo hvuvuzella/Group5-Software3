@@ -16,7 +16,7 @@ def get_bookings(name, lastname):
 @app.route('/schedule/<stylist_id>/<date>')
 def get_schedule(stylist_id, date):
     res = get_stylist_schedule(stylist_id, date)
-    return jsonify(res)
+    return jsonify({"data": res})
 
 
 

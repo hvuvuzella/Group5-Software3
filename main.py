@@ -44,10 +44,14 @@ def run():
                                           " 2 for Hannah Magee and 3 for Kate Losyeva.")
         date_to_check_schedule = input("What date do you want to check your schedule for?(YYYY-MM-DD)")
         stylist_schedule = get_stylist_schedule_by_date(stylist_to_check_schedule, date_to_check_schedule)
-        if len(stylist_schedule['booked slots']) == 0:
+        if len(stylist_schedule['data']) == 0:
             print("You have no appointments booked")
         else:
-            print(f"You have the following slots booked: {', '.join(stylist_schedule['booked slots'])}")
+            stylist_bookings = []
+            for booking in stylist_schedule["data"]:
+                stylist_bookings.append(
+                    f"{booking['name']} {booking['last_name']} (phone {booking['phone']}) - booking for {booking['treatment']}, time slot: {booking['time']}.\n")
+            print(f'You have the following bookings:\n{"".join(stylist_bookings)}')
     if stylist_or_customer == "c":
         registered_user = input("Are you a registered user?(y/n)")
         if registered_user == "n":
