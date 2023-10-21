@@ -46,6 +46,15 @@ def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_tim
 
     return result.json()
 
+# Sending request to endpoint to cancel appointment
+def cancel_booking(booking_id):
+    result = requests.delete(
+        'http://127.0.0.1:5000/cancel_booking/{}'.format(booking_id),
+        headers={'content-type': 'application/json'},
+    )
+    print('Success')
+
+    return result
 
 # Main function that runs all the requests depending on user's choice
 def run():
@@ -71,9 +80,15 @@ def run():
             client_last_name = (input("Enter your last name"))
             client_mobile = (input("Enter your mobile number"))
             client_email = (input("Enter your email"))
-        client_id = add_client(client_name, client_last_name, client_mobile, client_email)
-        print(f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
+            client_id = add_client(client_name, client_last_name, client_mobile, client_email)
+            print(f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
 
-
+        customer_choice = input("Type a if you want to add appointment,"
+                                " d if you want to cancel appointment.")
+        if customer_choice == "d":
+          booking_id = input("Enter your appointment id: ")
+          result = cancel_booking(booking_id)
+          print(result)
+    
 if __name__ == '__main__':
     run()
