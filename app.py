@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request #  imports specific objects and functions from the Flask web framework
-from db_utils import get_stylist_schedule, add_new_customer, add_new_booking # imports two specific functions from a module db_utils
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking # imports two specific functions from a module db_utils
 
 
 # Define a Flask web application
@@ -46,6 +46,13 @@ def add_appt():
     )
 
     return jsonify(booking_id)
+    
+# Cancelling an appointment
+@app.route('/cancel_booking/<booking_id>', methods=['DELETE'])  
+def cancel_appt(booking_id):
+    result = cancel_booking(booking_id)
+
+    return result
 
 
 if __name__ == '__main__':

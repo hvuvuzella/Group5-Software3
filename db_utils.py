@@ -87,7 +87,7 @@ def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking
             db_connection.close()
             print("DB connection is closed")
 
-    return {"customer_id": customer_id}
+    return {"booking_id": booking_id}
 
 #  Define function to update booking
 def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_date, booking_time):
@@ -143,8 +143,9 @@ def cancel_booking(booking_id):
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
-
-
+            
+    return "Booking cancelled successfully."
+        
 # THIS WORKS!
 #  Define function to get schedule of specific stylist for a specific date
 def get_stylist_schedule(stylist_id, booking_date):
