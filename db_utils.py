@@ -6,6 +6,19 @@ from config import USER, PASSWORD, HOST
 class DbConnectionError(Exception):
     pass
 
+def booking_change(appointments):
+    bookings = []
+    for app in appointments:
+        bookings.append({
+            "person_id": app[0],
+            "name": app[1],
+            "last_name": app[2],
+            "app_id": app[3],
+            "treatment": app[4],
+            "date": str(app[5]),
+            "time": str(app[6])
+        })
+    return bookings
 
 def _connect_to_db(db_name):
     connection = mysql.connector.connect(
@@ -176,13 +189,40 @@ def get_stylist_schedule(stylist_id, booking_date):
             print("DB connection is closed")
     return {"booked slots": not_available_times}
 
+def show_user_appointments(first_name, last_name):
+    try:
+        db_name = 'hair_salon'
+        db_connection = _connect_to_db(db_name)
+        cursor = db_connection.cursor()
+        print(f'Connected to database: {db_name}')
+
+        # execute query
+        select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
+                        b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
+                        WHERE  c.first_name = '{}' AND c.last_name = '{}'""".format(first_name, last_name))
+        cursor.execute(select_query)
+        results = cursor.fetchall()
+        cursor.close()
+        new_list = booking_change(results)
+
+
+    except Exception:
+        raise DbConnectionError("Failed to fetch data from DB")
+
+    finally:
+        if db_connection:
+            db_connection.close()
+            print("DB connection is closed")
+
+    return new_list
 def main():
-    add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
-    add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
-    update_booking(11, 11, 3, 3, '2023-12-06', '12:00:00')
-    cancel_booking(11)
-    get_stylist_schedule(1, '2023-11-01')
+    # add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
+    # add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
+    # update_booking(11, 11, 3, 3, '2023-12-06', '12:00:00')
+    # cancel_booking(11)
+    # get_stylist_schedule(1, '2023-11-01')
+    # show_user_appointments('Michael', 'Jackson')
 
 
-if __name__ == '__main__':
-    main()
+    if __name__ == '__main__':
+        main()

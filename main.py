@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 # Sending request to endpoint to get stylist schedule
 def get_stylist_schedule_by_date(stylist, date):
     result = requests.get(
@@ -8,6 +9,7 @@ def get_stylist_schedule_by_date(stylist, date):
         headers={'content-type': 'application/json'}
     )
     return result.json()
+
 
 # Sending request to endpoint to get add new user
 def add_client(first_name, last_name, mobile, email):
@@ -26,7 +28,14 @@ def add_client(first_name, last_name, mobile, email):
 
     return result.json()
 
-# Main function that runs all the requests depending on user's choice
+
+def get_bookings(first_name, last_name):
+    user_bookings = requests.get(
+        'http://127.0.0.1:5000/bookings/{}/{}'.format(first_name, last_name),
+        headers={'content-type': 'application/json'}
+    )
+    return user_bookings.json()
+
 def run():
     stylist_or_customer = input("Welcome to our hair salon where you can get everything you need for your hair.\nPrint "
                                 "s if you want to log in as a stylist and c if you want to log in as a customer.")
@@ -42,7 +51,8 @@ def run():
     if stylist_or_customer == "c":
         registered_user = input("Are you a registered user?(y/n)")
         if registered_user == "n":
-            client_name = input("To continue with your appointments you will be asked to register. Enter your first name")
+            client_name = input(
+                "To continue with your appointments you will be asked to register. Enter your first name")
             client_last_name = (input("Enter your last name"))
             client_mobile = (input("Enter your mobile number"))
             client_email = (input("Enter your email"))
@@ -50,8 +60,14 @@ def run():
             print(
                 f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
-            pass
+            reg_user_name = input("Enter your first name, please")
+            reg_user_last_name = input("Enter your last name, please")
+            bookings = get_bookings(reg_user_name, reg_user_last_name)
 
+            all_bookings = []
+            for booking in bookings["data"]:
+                all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
+            print(f'Your bookings are:\n{". ".join(all_bookings)}')
 
 
 if __name__ == '__main__':
