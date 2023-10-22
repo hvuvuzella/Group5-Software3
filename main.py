@@ -113,7 +113,6 @@ def run():
                     all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
                 print(f'Your bookings are:\n{". ".join(all_bookings)}')
             elif customer_choice == "n":
-
                 customer_id = int(input("Enter your customer id: "))
                 stylist_id = int(
                     input("\nInput 1 if you want to choose Erika Tatchyn, 2 - Hannah Magee and 3 - Kate Losyeva: "))
