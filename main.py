@@ -100,21 +100,22 @@ def run():
             print(
                 f"Congratulations! You are registered with an id {customer_id['customer_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
-            reg_customer_id = input("Enter your customer id, please")
-            bookings = get_bookings(reg_customer_id)
+            customer_choice = input("If you want to view your bookings type 'b', if you want to add a new booking type 'n',"
+                                    " if you want to delete your booking type 'd'" )
+            if customer_choice == "b":
+                reg_customer_id = input("Enter your customer id, please")
+                bookings = get_bookings(reg_customer_id)
+                all_bookings = []
+                for booking in bookings["data"]:
+                    all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
+                print(f'Your bookings are:\n{". ".join(all_bookings)}')
+            elif customer_choice == "n":
+                pass
+            elif customer_choice == "d":
+                booking_id = input("Enter your appointment id: ")
+                result = cancel_booking(booking_id)
+                print(result)
 
-            all_bookings = []
-            for booking in bookings["data"]:
-                all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
-            print(f'Your bookings are:\n{". ".join(all_bookings)}')
 
-
-        customer_choice = input("Type a if you want to add appointment,"
-                                " d if you want to cancel appointment.")
-        if customer_choice == "d":
-          booking_id = input("Enter your appointment id: ")
-          result = cancel_booking(booking_id)
-          print(result)
-    
 if __name__ == '__main__':
     run()
