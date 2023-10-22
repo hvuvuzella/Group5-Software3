@@ -6,10 +6,10 @@ from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, ca
 app = Flask(__name__)
 
 
-# Getting information about user bookings
-@app.route("/bookings/<name>/<lastname>")
-def get_bookings(name, lastname):
-    res = show_user_appointments(name, lastname)
+# Getting information about customer id
+@app.route("/bookings/<customer_id>")
+def get_bookings(customer_id):
+    res = show_user_appointments(customer_id)
     return jsonify({"data": res})
 
 
