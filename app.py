@@ -10,9 +10,9 @@ app = Flask(__name__)
 
 # Getting information about user bookings
 
-@app.route('/bookings/<name>/<lastname>')
-def get_bookings(name, lastname):
-    res = show_user_appointments(name, lastname)
+@app.route('/bookings/<customer_id>')
+def get_bookings(customer_id):
+    res = show_user_appointments(customer_id)
     return jsonify({"data": res})
 
 # Getting information about stylist appointments for the day

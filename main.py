@@ -31,9 +31,9 @@ def add_client(first_name, last_name, mobile, email):
 
 
 
-def get_bookings(first_name, last_name):
+def get_bookings(customer_id):
     user_bookings = requests.get(
-        'http://127.0.0.1:5000/bookings/{}/{}'.format(first_name, last_name),
+        'http://127.0.0.1:5000/bookings/{}'.format(customer_id),
         headers={'content-type': 'application/json'}
     )
     return user_bookings.json()
@@ -95,36 +95,33 @@ def run():
             client_last_name = (input("Enter your last name"))
             client_mobile = (input("Enter your mobile number"))
             client_email = (input("Enter your email"))
-            client_id = add_client(client_name, client_last_name, client_mobile, client_email)
+            customer_id = add_client(client_name, client_last_name, client_mobile, client_email)
 
             print(
-                f"Congratulations! You are registered with an id {client_id['customer_id']}. Use this id to make, update and delete your appointments.")
+                f"Congratulations! You are registered with an id {customer_id['customer_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
-            reg_user_name = input("Enter your first name, please")
-            reg_user_last_name = input("Enter your last name, please")
-            bookings = get_bookings(reg_user_name, reg_user_last_name)
-
-            all_bookings = []
-            for booking in bookings["data"]:
-                all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
-            print(f'Your bookings are:\n{". ".join(all_bookings)}')
-
-
-        customer_choice = input("Type a if you want to add appointment,"
-                                " d if you want to cancel appointment.")
-        if customer_choice == "d":
-          booking_id = input("Enter your appointment id: ")
-          result = cancel_booking(booking_id)
-          print(result)
-        elif customer_choice == "a":
-            customer_id = int(input("Enter your customer id: "))
-            stylist_id = int(input("Type 1 if you want to check schedule for Erika Tatchyn, 2 for Hannah Magee and 3 for Kate Losyeva: "))
-            treatment_id = int(input("Enter the id of treatment (from 1 to 10: "))
-            booking_date = input("Enter the date in format YYYY-MM-DD: ")
-            booking_time = input("Enter the time to book in format hh:mm ")
-            booking_time = booking_time + ':00'
-            add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
-            print("Congratulations! You are registered with an id {booking_id}. Use this id to make, update and delete your appointments.")
+            customer_choice = input("If you want to view your bookings type 'b', if you want to add a new booking type 'n',"
+                                    " if you want to delete your booking type 'd'" )
+            if customer_choice == "b":
+                reg_customer_id = input("Enter your customer id, please")
+                bookings = get_bookings(reg_customer_id)
+                all_bookings = []
+                for booking in bookings["data"]:
+                    all_bookings.append(f"{booking['name']} {booking['last_name']} (customer id {booking['app_id']}) - booking for {booking['treatment']} with booking id {booking['app_id']} for {booking['date']} at {booking['time']}")
+                print(f'Your bookings are:\n{". ".join(all_bookings)}')
+            elif customer_choice == "n":
+                customer_id = int(input("Enter your customer id: "))
+                stylist_id = int(input(
+                    "Type 1 if you want to check schedule for Erika Tatchyn, 2 for Hannah Magee and 3 for Kate Losyeva: "))
+                treatment_id = int(input("Enter the id of treatment (from 1 to 10: "))
+                booking_date = input("Enter the date in format YYYY-MM-DD: ")
+                booking_time = input("Enter the time to book in format hh:mm ")
+                booking_time = booking_time + ':00'
+                add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
+            elif customer_choice == "d":
+                booking_id = input("Enter your appointment id: ")
+                result = cancel_booking(booking_id)
+                print(result)
 
 
 if __name__ == '__main__':
