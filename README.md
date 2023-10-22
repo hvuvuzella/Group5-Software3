@@ -45,6 +45,7 @@ we can demonstrate it
 - Each of us created their branch and added his piece of work,
     after which branches were merged
     ![VSCode Changes](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/f2e7de21-c7c0-4577-82c3-b34bf5905197)
+    ![Pull Request](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/9df54921-b714-41db-9e86-83111a24d33f)
     ![Terminal Commands](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/94803866-66a4-4b3c-a9d7-cc150a196beb)
 
 
