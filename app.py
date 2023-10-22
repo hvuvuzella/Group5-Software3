@@ -1,22 +1,34 @@
 from flask import Flask, jsonify, request #  imports specific objects and functions from the Flask web framework
-from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking # imports two specific functions from a module db_utils
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, show_user_appointments # imports two specific functions from a module db_utils
+
 
 
 # Define a Flask web application
 app = Flask(__name__)
 
 
+
+# Getting information about user bookings
+
+@app.route('/bookings/<name>/<lastname>')
+def get_bookings(name, lastname):
+    res = show_user_appointments(name, lastname)
+    return jsonify({"data": res})
+
 # Getting information about stylist appointments for the day
-# Define a route to retrieve stylist schedule for a specific date
+
 @app.route('/schedule/<stylist_id>/<date>')
 # Calls the 'get_stylist_schedule' function with parameters stylist_id and date
 # that returns result as a JSON response
 def get_schedule(stylist_id, date):
     res = get_stylist_schedule(stylist_id, date)
-    return jsonify(res)
+    return jsonify({"data": res})
+
+
 
 # Creating a new client in a database
 # Define a route to add a new client to the database
+
 @app.route('/add_new_client', methods=['POST'])
 def add_client():
     # Accepts POST requests with JSON data containing client information
@@ -56,4 +68,5 @@ def cancel_appt(booking_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run(debug=True)
+

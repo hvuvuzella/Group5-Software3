@@ -5,8 +5,35 @@ from config import USER, PASSWORD, HOST
 
 class DbConnectionError(Exception):
     pass
+# changing user appointments into the list of dictionaries for easier handling
+def booking_change(appointments):
+    bookings = []
+    for app in appointments:
+        bookings.append({
+            "person_id": app[0],
+            "name": app[1],
+            "last_name": app[2],
+            "app_id": app[3],
+            "treatment": app[4],
+            "date": str(app[5]),
+            "time": str(app[6])
+        })
+    return bookings
 
-
+# changing stylist appointments into the list of dictionaries for easier handling
+def stylist_booking_change(appointments):
+    stylist_bookings = []
+    for appointment in appointments:
+        stylist_bookings.append(
+            {
+                "name": appointment[1],
+                "last_name": appointment[2],
+                "phone": appointment[3],
+                "treatment": appointment[4],
+                "time": f'{str(appointment[5])} - {str(appointment[6])}'
+            }
+        )
+    return stylist_bookings
 def _connect_to_db(db_name):
     connection = mysql.connector.connect(
         host=HOST,
@@ -174,11 +201,7 @@ def get_stylist_schedule(stylist_id, booking_date):
                 print(row)
         else:
             print("No bookings found for the given date.")
-        not_available_times = []
-        for result in results:
-            for appointment in result.fetchall():
-                not_available_times.append(f'{appointment[5]} - {appointment[6]}')
-    
+
     except Exception:
         raise DbConnectionError("Failed to read data from database")
 
@@ -186,7 +209,37 @@ def get_stylist_schedule(stylist_id, booking_date):
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
-    return {"booked slots": not_available_times}
+
+    return stylist_booking_change(rows)
+
+
+# function for getting user bookings from database
+def show_user_appointments(first_name, last_name):
+    try:
+        db_name = 'hair_salon'
+        db_connection = _connect_to_db(db_name)
+        cursor = db_connection.cursor()
+        print(f'Connected to database: {db_name}')
+
+        # execute query for getting all the bookings
+        select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
+                        b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
+                        WHERE  c.first_name = '{}' AND c.last_name = '{}'""".format(first_name, last_name))
+        cursor.execute(select_query)
+        results = cursor.fetchall()
+        cursor.close()
+        new_list = booking_change(results)
+
+
+    except Exception:
+        raise DbConnectionError("Failed to fetch data from DB")
+
+    finally:
+        if db_connection:
+            db_connection.close()
+            print("DB connection is closed")
+
+    return new_list
 
 
 def get_all_treatments():
@@ -213,6 +266,7 @@ def get_all_treatments():
 
 
 def main():
+
     # Add a new customer to the database
     add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
     
@@ -229,5 +283,6 @@ def main():
     get_stylist_schedule(1, '2023-11-01')
 
 
-if __name__ == '__main__':
-    main()
+
+    if __name__ == '__main__':
+        main()
