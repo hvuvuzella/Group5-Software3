@@ -1,26 +1,39 @@
 import mysql.connector # module that allows to establish database connection
-
 from config import USER, PASSWORD, HOST
-
 
 class DbConnectionError(Exception):
     pass
-# changing user appointments into the list of dictionaries for easier handling
+
+def _connect_to_db(db_name):
+    connection = mysql.connector.connect(
+        host = HOST,
+        user = USER,
+        password = PASSWORD,
+        auth_plugin = "mysql_native_password",
+        database = db_name
+    )
+    return connection
+
+
+# Define function for changing user appointments into the list of dictionaries for easier handling
 def booking_change(appointments):
     bookings = []
     for app in appointments:
-        bookings.append({
-            "person_id": app[0],
-            "name": app[1],
-            "last_name": app[2],
-            "app_id": app[3],
-            "treatment": app[4],
-            "date": str(app[5]),
-            "time": str(app[6])
-        })
+        bookings.append(
+            {
+                "person_id": app[0],
+                "name": app[1],
+                "last_name": app[2],
+                "app_id": app[3],
+                "treatment": app[4],
+                "date": str(app[5]),
+                "time": str(app[6])
+            }
+        )
     return bookings
 
-# changing stylist appointments into the list of dictionaries for easier handling
+
+# Define function for changing stylist appointments into the list of dictionaries for easier handling
 def stylist_booking_change(appointments):
     stylist_bookings = []
     for appointment in appointments:
@@ -34,26 +47,18 @@ def stylist_booking_change(appointments):
             }
         )
     return stylist_bookings
-def _connect_to_db(db_name):
-    connection = mysql.connector.connect(
-        host=HOST,
-        user=USER,
-        password=PASSWORD,
-        auth_plugin='mysql_native_password',
-        database=db_name
-    )
-    return connection
 
-# Define function that adds new client
+
+# Define function that adds new client and print relative message
 def add_new_customer(first_name, last_name, mobile, email):
     try:
         # Establish a connection to the 'hair_salon' database
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
-        # execute query
+        # Execute query
         insert_query = "INSERT INTO customers (first_name, last_name, mobile, email) VALUES (%s, %s, %s, %s)"
         customer_data = (first_name, last_name, mobile, email)
 
@@ -76,16 +81,17 @@ def add_new_customer(first_name, last_name, mobile, email):
             db_connection.close()
             print("DB connection is closed")
 
-    return {"customer_id": customer_id}
+    return {"Customer_id ": customer_id}
+
 
 # Define function to add a new booking to a database "hair salon"
 def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
     try:
          # Establish a connection to the 'hair_salon' database
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
         # Define the SQL query to call the procedure to add a new booking
         procedure_call = "CALL AddNewBooking(%s %s %s %s %s)"
@@ -114,16 +120,17 @@ def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking
             db_connection.close()
             print("DB connection is closed")
 
-    return {"booking_id": booking_id}
+    return {"Booking_id": booking_id}
+
 
 #  Define function to update booking
 def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_date, booking_time):
     try:
         # Establish a connection to the 'hair_salon' database
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
         # Define the SQL query to call the stored procedure for updating a booking
         procedure_call = "CALL UpdateBooking(%s, %s, %s, %s, %s, %s)"
@@ -147,10 +154,10 @@ def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_da
 def cancel_booking(booking_id):
     try:
         # Establish a connection to the 'hair_salon' database
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
         # Define the SQL query to call the stored procedure for canceling a booking
         procedure_call = "CALL CancelBooking(%s)"
@@ -172,19 +179,19 @@ def cancel_booking(booking_id):
             print("DB connection is closed")
             
     return "Booking cancelled successfully."
-        
-# THIS WORKS!
+
+
 #  Define function to get schedule of specific stylist for a specific date
 def get_stylist_schedule(stylist_id, booking_date):
     try:
         # Establish a connection to the 'hair_salon' database
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
         # Call the stored procedure to get a stylist's schedule
-        cursor.callproc('GetStylistSchedule', [stylist_id, booking_date])
+        cursor.callproc("GetStylistSchedule", [stylist_id, booking_date])
         # Move to the next result set in the cursor
         cursor.nextset()
 
@@ -213,15 +220,16 @@ def get_stylist_schedule(stylist_id, booking_date):
     return stylist_booking_change(rows)
 
 
-# function for getting user bookings from database
-def show_user_appointments(first_name, last_name):
+
+# Define function for getting user bookings from database
+def show_user_appointments(customer_id):
     try:
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
-        print(f'Connected to database: {db_name}')
+        print(f"Connected to database: {db_name}")
 
-        # execute query for getting all the bookings
+        # Execute query for getting all the bookings
         select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
                         b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
                         WHERE  c.first_name = '{}' AND c.last_name = '{}' ORDER BY b.booking_date, b.booking_time""".format(first_name, last_name))
@@ -229,7 +237,6 @@ def show_user_appointments(first_name, last_name):
         results = cursor.fetchall()
         cursor.close()
         new_list = booking_change(results)
-
 
     except Exception:
         raise DbConnectionError("Failed to fetch data from DB")
@@ -242,9 +249,10 @@ def show_user_appointments(first_name, last_name):
     return new_list
 
 
+# Define function for getting treatments information from database
 def get_all_treatments():
     try:
-        db_name = 'hair_salon'
+        db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()
         # print(f"Connected to database {db_name}")
@@ -271,16 +279,16 @@ def main():
     add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
     
     # Add a new booking for a specific customer, stylist, treatment, date, and time
-    add_new_booking(11, 3, 3, '2023-12-06', '09:00:00')
+    add_new_booking(11, 3, 3, "2023-12-06", "09:00:00")
     
     # Update a booking with new details
-    update_booking(11, 11, 3, 3, '2023-12-06', '12:00:00')
+    update_booking(11, 11, 3, 3, "2023-12-06", "12:00:00")
     
     # Cancel a booking by its ID
     cancel_booking(11)
 
     # Retrieve and display the schedule for a stylist on a specific date
-    get_stylist_schedule(1, '2023-11-01')
+    get_stylist_schedule(1, "2023-11-01")
 
 
 
