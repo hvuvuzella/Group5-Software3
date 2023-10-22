@@ -98,7 +98,7 @@ def run():
             client_id = add_client(client_name, client_last_name, client_mobile, client_email)
 
             print(
-                f"Congratulations! You are registered with an id {client_id['client_id']}. Use this id to make, update and delete your appointments.")
+                f"Congratulations! You are registered with an id {client_id['customer_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
             reg_user_name = input("Enter your first name, please")
             reg_user_last_name = input("Enter your last name, please")
