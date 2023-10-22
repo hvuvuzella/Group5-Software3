@@ -2,22 +2,19 @@ from flask import Flask, jsonify, request #  imports specific objects and functi
 from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, show_user_appointments # imports two specific functions from a module db_utils
 
 
-
 # Define a Flask web application
 app = Flask(__name__)
 
 
-
 # Getting information about user bookings
-
-@app.route('/bookings/<name>/<lastname>')
+@app.route("/bookings/<name>/<lastname>")
 def get_bookings(name, lastname):
     res = show_user_appointments(name, lastname)
     return jsonify({"data": res})
 
-# Getting information about stylist appointments for the day
 
-@app.route('/schedule/<stylist_id>/<date>')
+# Getting information about stylist appointments for the day
+@app.route("/schedule/<stylist_id>/<date>")
 # Calls the 'get_stylist_schedule' function with parameters stylist_id and date
 # that returns result as a JSON response
 def get_schedule(stylist_id, date):
@@ -25,45 +22,41 @@ def get_schedule(stylist_id, date):
     return jsonify({"data": res})
 
 
-
 # Creating a new client in a database
 # Define a route to add a new client to the database
-
-@app.route('/add_new_client', methods=['POST'])
+@app.route("/add_new_client", methods=["POST"])
 def add_client():
     # Accepts POST requests with JSON data containing client information
     client = request.get_json()
     # Calls  the 'add_new_customer' function with client information and retrieves the new client's ID
     # and returns created client's ID as a JSON response
     client_id = add_new_customer(
-        first_name=client['first_name'],
-        last_name=client['last_name'],
-        mobile=client['mobile'],
-        email=client['email'],
+        first_name = client["first_name"],
+        last_name = client["last_name"],
+        mobile = client["mobile"],
+        email = client["email"],
     )
-
     return jsonify(client_id)
 
 
 # Creating a new appointment
-@app.route('/add_new_booking', methods=['POST'])
+@app.route("/add_new_booking", methods=["POST"])
 def add_appt():
     booking = request.get_json()
     booking_id = add_new_booking(
-        customer_id=booking['customer_id'],
-        stylist_id=booking['stylist_id'],
-        treatment_id=booking['treatment_id'],
-        booking_date=booking['booking_date'],
-        booking_time=booking['booking_time']
+        customer_id = booking["customer_id"],
+        stylist_id = booking["stylist_id"],
+        treatment_id = booking["treatment_id"],
+        booking_date = booking["booking_date"],
+        booking_time = booking["booking_time"]
     )
-
     return jsonify(booking_id)
-    
-# Cancelling an appointment
-@app.route('/cancel_booking/<booking_id>', methods=['DELETE'])  
+
+
+# Cancelling an appointment with DELETE method
+@app.route("/cancel_booking/<booking_id>", methods=["DELETE"])  
 def cancel_appt(booking_id):
     result = cancel_booking(booking_id)
-
     return result
 
 
