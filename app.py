@@ -1,11 +1,9 @@
-from flask import Flask, jsonify, request #  imports specific objects and functions from the Flask web framework
-from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, show_user_appointments # imports two specific functions from a module db_utils
-
-
+from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, \
+    show_user_appointments  # imports two specific functions from a module db_utils
 
 # Define a Flask web application
 app = Flask(__name__)
-
 
 
 # Getting information about user bookings
@@ -15,6 +13,7 @@ def get_bookings(name, lastname):
     res = show_user_appointments(name, lastname)
     return jsonify({"data": res})
 
+
 # Getting information about stylist appointments for the day
 
 @app.route('/schedule/<stylist_id>/<date>')
@@ -23,7 +22,6 @@ def get_bookings(name, lastname):
 def get_schedule(stylist_id, date):
     res = get_stylist_schedule(stylist_id, date)
     return jsonify({"data": res})
-
 
 
 # Creating a new client in a database
@@ -58,9 +56,10 @@ def add_appt():
     )
 
     return jsonify(booking_id)
-    
+
+
 # Cancelling an appointment
-@app.route('/cancel_booking/<booking_id>', methods=['DELETE'])  
+@app.route('/cancel_booking/<booking_id>', methods=['DELETE'])
 def cancel_appt(booking_id):
     result = cancel_booking(booking_id)
 
@@ -68,5 +67,4 @@ def cancel_appt(booking_id):
 
 
 if __name__ == '__main__':
-   app.run(debug=True)
-
+    app.run(debug=True)
