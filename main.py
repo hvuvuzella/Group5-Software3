@@ -1,5 +1,6 @@
 import requests # import module for requesting API
 import json # import module to work with json data
+from db_utils import get_all_treatments # import the module
 
 # Define a function that sends request to the endpoint to get stylist schedule for specific date
 
@@ -118,15 +119,32 @@ def run():
           print(result)
         elif customer_choice == "a":
             customer_id = int(input("Enter your customer id: "))
-            stylist_id = int(input("Type 1 if you want to check schedule for Erika Tatchyn, 2 for Hannah Magee and 3 for Kate Losyeva: "))
-            treatment_id = int(input("Enter the id of treatment (from 1 to 10: "))
-            booking_date = input("Enter the date in format YYYY-MM-DD: ")
-            booking_time = input("Enter the time to book in format hh:mm ")
+            stylist_id = int(input("\nInput 1 if you want to choose Erika Tatchyn, 2 - Hannah Magee and 3 - Kate Losyeva: "))
+            print("\nList of treatments:")
+            get_all_treatments()
+            treatment_id = int(input("\nEnter the id of treatment (for example, 5): "))
+            booking_date = input("\nEnter the desirable date in format YYYY-MM-DD (we are off on Mondays and Tuesdays): ")
+            stylist_schedule = get_stylist_schedule_by_date(stylist_id, booking_date)
+
+            if len(stylist_schedule['data']) == 0:
+                print(f"\nThis stylist has no appointments booked on {booking_date}")
+            else:
+                stylist_bookings = []
+                for booking in stylist_schedule["data"]:
+                    stylist_bookings.append(
+                        f"time slot: {booking['time']}.\n")
+                print(f'This stylist has the following bookings  on {booking_date}:\n{"".join(stylist_bookings)}')
+
+            print("""Our working hours:
+            09:00 - 18:00 We, Th, Fr
+            10:00 - 18:00 Sa
+            12:00 - 17:00 Su""")
+            booking_time = input("\nEnter the time to book in format hh:mm ")
             booking_time = booking_time + ':00'
             add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
-            print("Congratulations! You are registered with an id {booking_id}. Use this id to make, update and delete your appointments.")
+            print(f"Congratulations! You are registered. Your appointment is on {booking_date} at {booking_time}")
 
 
 if __name__ == '__main__':
     run()
-    #add_booking(2, 1, 2, '2023-10-23', '09:00')
+    #add_booking(2, 1, 2, '2023-12-22', '09:00')

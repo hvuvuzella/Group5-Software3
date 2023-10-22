@@ -268,7 +268,8 @@ BEGIN
     JOIN customers AS c ON a.customer_id = c.id
     JOIN treatments AS t ON a.treatment_id = t.id
     WHERE a.stylist_id = stylist_id
-    AND a.booking_date = booking_date;
+    AND a.booking_date = booking_date
+    ORDER BY a.booking_date, a.booking_time;
 END;
 //
 DELIMITER ;

@@ -224,7 +224,7 @@ def show_user_appointments(first_name, last_name):
         # execute query for getting all the bookings
         select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
                         b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
-                        WHERE  c.first_name = '{}' AND c.last_name = '{}'""".format(first_name, last_name))
+                        WHERE  c.first_name = '{}' AND c.last_name = '{}' ORDER BY b.booking_date, b.booking_time""".format(first_name, last_name))
         cursor.execute(select_query)
         results = cursor.fetchall()
         cursor.close()
@@ -247,15 +247,15 @@ def get_all_treatments():
         db_name = 'hair_salon'
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()
-        print(f"Connected to database {db_name}")
+        # print(f"Connected to database {db_name}")
 
-        query = """SELECT id, name FROM treatments"""
+        query = """SELECT id, name, duration FROM treatments"""
 
         cur.execute(query)
         results = cur.fetchall()
 
         for i in results:
-            print(i)
+            print(i[0], '"', i[1], '"', i[2].total_seconds()/60, 'min')
 
     except Exception as exc:
         print(exc)
@@ -284,5 +284,6 @@ def main():
 
 
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
+
