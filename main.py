@@ -116,6 +116,17 @@ def run():
           booking_id = input("Enter your appointment id: ")
           result = cancel_booking(booking_id)
           print(result)
-    
+        elif customer_choice == "a":
+            customer_id = int(input("Enter your customer id: "))
+            stylist_id = int(input("Type 1 if you want to check schedule for Erika Tatchyn, 2 for Hannah Magee and 3 for Kate Losyeva: "))
+            treatment_id = int(input("Enter the id of treatment (from 1 to 10: "))
+            booking_date = input("Enter the date in format YYYY-MM-DD: ")
+            booking_time = input("Enter the time to book in format hh:mm ")
+            booking_time = booking_time + ':00'
+            add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
+            print("Congratulations! You are registered with an id {booking_id}. Use this id to make, update and delete your appointments.")
+
+
 if __name__ == '__main__':
     run()
+    #add_booking(2, 1, 2, '2023-10-23', '09:00')
