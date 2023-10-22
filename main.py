@@ -31,9 +31,9 @@ def add_client(first_name, last_name, mobile, email):
 
 
 
-def get_bookings(first_name, last_name):
+def get_bookings(customer_id):
     user_bookings = requests.get(
-        'http://127.0.0.1:5000/bookings/{}/{}'.format(first_name, last_name),
+        'http://127.0.0.1:5000/bookings/{}'.format(customer_id),
         headers={'content-type': 'application/json'}
     )
     return user_bookings.json()
@@ -95,14 +95,13 @@ def run():
             client_last_name = (input("Enter your last name"))
             client_mobile = (input("Enter your mobile number"))
             client_email = (input("Enter your email"))
-            client_id = add_client(client_name, client_last_name, client_mobile, client_email)
+            customer_id = add_client(client_name, client_last_name, client_mobile, client_email)
 
             print(
-                f"Congratulations! You are registered with an id {client_id['customer_id']}. Use this id to make, update and delete your appointments.")
+                f"Congratulations! You are registered with an id {customer_id['customer_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
-            reg_user_name = input("Enter your first name, please")
-            reg_user_last_name = input("Enter your last name, please")
-            bookings = get_bookings(reg_user_name, reg_user_last_name)
+            reg_customer_id = input("Enter your customer id, please")
+            bookings = get_bookings(reg_customer_id)
 
             all_bookings = []
             for booking in bookings["data"]:
