@@ -231,8 +231,8 @@ def show_user_appointments(customer_id):
 
         # Execute query for getting all the bookings
         select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.id) as treatment,
-                        b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
-                        WHERE  c.first_name = '{}' AND c.last_name = '{}' ORDER BY b.booking_date, b.booking_time""".format(first_name, last_name))
+                                b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
+                                WHERE  c.id = {}""".format(int(customer_id)))
         cursor.execute(select_query)
         results = cursor.fetchall()
         cursor.close()
