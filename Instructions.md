@@ -32,7 +32,7 @@ Type `pip install <packge name>`
 
 Alternatively, you can install packages through Python Interpreter in your Settings menu.
 
-You can find more information on installing packages [here](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+You can find more information on installing packages [here](https://packaging.python.org/en/latest/tutorials/installing-packages/).
 
 ---
 
@@ -63,4 +63,4 @@ As you navigate the API, there are a number of outcomes you should expect. See t
 ![API Workflow](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/ee6d784e-b531-46ca-a3bb-5457f9b380c5)
 
 --- 
-## Thank you for using our API, we hope you enjoy it! 😁
+### Thank you for using our API, we hope you enjoy it! 😁
