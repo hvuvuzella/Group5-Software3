@@ -100,7 +100,6 @@ def run():
             client_mobile = (input("Enter your mobile number: "))
             client_email = (input("Enter your email: "))
             customer_id = add_client(client_name, client_last_name, client_mobile, client_email)
-
             print(f"Congratulations! You are registered with an id {customer_id['customer_id']}. Use this id to make, update and delete your appointments.")
         elif registered_user == "y":
             customer_choice = input("If you want to view your bookings type 'b', if you want to add a new booking type 'n',"

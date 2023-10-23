@@ -81,7 +81,7 @@ def add_new_customer(first_name, last_name, mobile, email):
             db_connection.close()
             print("DB connection is closed")
 
-    return {"Customer_id ": customer_id}
+    return {"customer_id": customer_id}
 
 
 # Define function to add a new booking to a database "hair salon"
