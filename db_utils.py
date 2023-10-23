@@ -1,21 +1,23 @@
-import mysql.connector # module that allows to establish database connection
+import mysql.connector  # module that allows to establish database connection
 from config import USER, PASSWORD, HOST
+
 
 class DbConnectionError(Exception):
     pass
 
+
 def _connect_to_db(db_name):
     connection = mysql.connector.connect(
-        host = HOST,
-        user = USER,
-        password = PASSWORD,
-        auth_plugin = "mysql_native_password",
-        database = db_name
+        host=HOST,
+        user=USER,
+        password=PASSWORD,
+        auth_plugin="mysql_native_password",
+        database=db_name
     )
     return connection
 
 
-# Define function for changing user appointments into the list of dictionaries for easier handling
+# Define function for changing booking data for each booking into dictionaries for easier handling
 def booking_change(appointments):
     bookings = []
     for app in appointments:
@@ -33,7 +35,7 @@ def booking_change(appointments):
     return bookings
 
 
-# Define function for changing stylist appointments into the list of dictionaries for easier handling
+# Define function for changing stylist's bookings data into dictionaries for easier handling
 def stylist_booking_change(appointments):
     stylist_bookings = []
     for appointment in appointments:
@@ -49,7 +51,7 @@ def stylist_booking_change(appointments):
     return stylist_bookings
 
 
-# Define function that adds new client and print relative message
+# Define function that adds new client to DB and print relative message
 def add_new_customer(first_name, last_name, mobile, email):
     try:
         # Establish a connection to the 'hair_salon' database
@@ -84,10 +86,10 @@ def add_new_customer(first_name, last_name, mobile, email):
     return {"customer_id": customer_id}
 
 
-# Define function to add a new booking to a database "hair salon"
+# Define function to add a new booking to DB
 def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
     try:
-         # Establish a connection to the 'hair_salon' database
+        # Establish a connection to the 'hair_salon' database
         db_name = "hair_salon"
         db_connection = _connect_to_db(db_name)
         cursor = db_connection.cursor()
@@ -123,7 +125,7 @@ def add_new_booking(customer_id, stylist_id, treatment_id, booking_date, booking
     return {"Booking_id": booking_id}
 
 
-#  Define function to update booking
+#  Define function to update booking in DB
 def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_date, booking_time):
     try:
         # Establish a connection to the 'hair_salon' database
@@ -150,7 +152,7 @@ def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_da
             print("DB connection is closed")
 
 
-#  Define function to cancel booking
+#  Define function to cancel booking in DB
 def cancel_booking(booking_id):
     try:
         # Establish a connection to the 'hair_salon' database
@@ -177,7 +179,7 @@ def cancel_booking(booking_id):
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
-            
+
     return "Booking cancelled successfully."
 
 
@@ -220,8 +222,7 @@ def get_stylist_schedule(stylist_id, booking_date):
     return stylist_booking_change(rows)
 
 
-
-# Define function for getting user bookings from database
+# Define function for getting customer's bookings from database
 def show_user_appointments(customer_id):
     try:
         db_name = "hair_salon"
@@ -249,7 +250,7 @@ def show_user_appointments(customer_id):
     return new_list
 
 
-# Define function for getting treatments information from database
+# Define function for getting treatment information from database
 def get_all_treatments():
     try:
         db_name = "hair_salon"
@@ -263,7 +264,7 @@ def get_all_treatments():
         results = cur.fetchall()
 
         for i in results:
-            print(i[0], '"', i[1], '"', i[2].total_seconds()/60, 'min')
+            print(i[0], '"', i[1], '"', i[2].total_seconds() / 60, 'min')
 
     except Exception as exc:
         print(exc)
@@ -274,16 +275,17 @@ def get_all_treatments():
 
 
 def main():
+    # Run functions below to ensure connecting to DB is successful:
 
     # Add a new customer to the database
     add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
-    
+
     # Add a new booking for a specific customer, stylist, treatment, date, and time
     add_new_booking(11, 3, 3, "2023-12-06", "09:00:00")
-    
+
     # Update a booking with new details
     update_booking(11, 11, 3, 3, "2023-12-06", "12:00:00")
-    
+
     # Cancel a booking by its ID
     cancel_booking(11)
 
@@ -291,7 +293,5 @@ def main():
     get_stylist_schedule(1, "2023-11-01")
 
 
-
 if __name__ == '__main__':
     main()
-
