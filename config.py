@@ -1,3 +1,3 @@
 HOST = "localhost"  # this should ALWAYS BE localhost
-USER = "root"  # change to your MySQL user
-PASSWORD = "private"  # change to your MYSQL password
+USER = "helen"  # change to your MySQL user
+PASSWORD = "Dogeatdog@1"  # change to your MYSQL password
