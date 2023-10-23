@@ -135,8 +135,9 @@ def run():
                 12:00 - 17:00 Su""")
                 booking_time = input("\nEnter the time to book in format hh:mm. (There should be at least 5 min interval beetween appointments to prepare your place!) ")
                 booking_time = booking_time + ':00'
-                add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
+                booking_id = add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
                 print(f"\nCongratulations! You are registered. Your appointment is on {booking_date} at {booking_time}")
+                print(f"Your booking ID is {booking_id['Booking_id']}. Please make note of this booking ID so that you can cancel your booking if needed")
             elif customer_choice == "d":
                 booking_id = input("Enter your appointment id: ")
                 result = cancel_booking(booking_id)
