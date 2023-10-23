@@ -73,7 +73,7 @@ def cancel_booking(booking_id):
 # Main function that runs all the requests depending on user's choice
 def run():
     stylist_or_customer = input("Welcome to our hair salon where you can get everything you need for your hair.\nPrint "
-                                "s if you want to log in as a stylist and c if you want to log in as a customer. ")
+                                "'s' if you want to log in as a stylist and 'c' if you want to log in as a customer. ")
     
     # If the user logs in as a stylist, they can check their schedule for a specific date
     if stylist_or_customer == "s":
