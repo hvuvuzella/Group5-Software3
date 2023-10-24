@@ -90,7 +90,7 @@ from within the SQL file. Enjoy!
 
 ## What to expect
 As you navigate the API, there are a number of outcomes you should expect. See the flowchart below:
-![Final Workflow](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/8cd0f6f5-5ed4-4bcf-a068-5ba41b03fa18)
+![Final API Workflow](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/704ccc9f-d33b-499e-90c6-b8f63f2826b9)
 
 --- 
 ### Thank you for using our API, we hope you enjoy it! 😁
