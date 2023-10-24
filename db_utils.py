@@ -17,7 +17,7 @@ def _connect_to_db(db_name):
     return connection
 
 
-# Define function for changing booking data for each booking into dictionaries for easier handling
+# Define function for changing booking data for each booking into dictionaries for easier handling in Main.py
 def booking_change(appointments):
     bookings = []
     for i in appointments:
@@ -36,7 +36,7 @@ def booking_change(appointments):
     return bookings
 
 
-# Define function for changing stylist's bookings data into dictionaries for easier handling
+# Define function for changing stylist's bookings data into dictionaries for easier handling in Main.py
 def stylist_booking_change(appointments):
     stylist_bookings = []
     for appointment in appointments:
@@ -278,7 +278,7 @@ def get_all_treatments():
 
 
 def main():
-    # Run functions below to ensure connecting to DB is successful:
+    # Run relevant functions below to ensure connecting to DB is successful:
 
     # Add a new customer to the database
     add_new_customer("Helen", "Vu", "07772365887", "helen.vu@email.com")
