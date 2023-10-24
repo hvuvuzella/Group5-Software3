@@ -399,4 +399,9 @@ SELECT * FROM salon_info;
 SELECT * FROM opening_times;
 SELECT * FROM bookings;
 
-    
+-- test query that will be used in show_user_appointments(customer_id) function later on in db_utils.py in Python
+SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.treatment_id) as treatment, b.booking_date, b.booking_time, s.first_name
+FROM bookings b
+JOIN customers c ON c.id = b.customer_id
+JOIN stylists s  ON s.id = b.stylist_id
+WHERE  c.id = 1;

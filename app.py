@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request #  imports specific objects and functions from the Flask web framework
-from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, show_user_appointments # imports two specific functions from a module db_utils
-
+from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
+from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, \
+    show_user_appointments  # imports two specific functions from a module db_utils
 
 # Define a Flask web application
 app = Flask(__name__)
@@ -31,10 +31,10 @@ def add_client():
     # Calls  the 'add_new_customer' function with client information and retrieves the new client's ID
     # and returns created client's ID as a JSON response
     client_id = add_new_customer(
-        first_name = client["first_name"],
-        last_name = client["last_name"],
-        mobile = client["mobile"],
-        email = client["email"],
+        first_name=client["first_name"],
+        last_name=client["last_name"],
+        mobile=client["mobile"],
+        email=client["email"],
     )
     return jsonify(client_id)
 
@@ -44,22 +44,21 @@ def add_client():
 def add_appt():
     booking = request.get_json()
     booking_id = add_new_booking(
-        customer_id = booking["customer_id"],
-        stylist_id = booking["stylist_id"],
-        treatment_id = booking["treatment_id"],
-        booking_date = booking["booking_date"],
-        booking_time = booking["booking_time"]
+        customer_id=booking["customer_id"],
+        stylist_id=booking["stylist_id"],
+        treatment_id=booking["treatment_id"],
+        booking_date=booking["booking_date"],
+        booking_time=booking["booking_time"]
     )
     return jsonify(booking_id)
 
 
 # Cancelling an appointment with DELETE method
-@app.route("/cancel_booking/<booking_id>", methods=["DELETE"])  
+@app.route("/cancel_booking/<booking_id>", methods=["DELETE"])
 def cancel_appt(booking_id):
     result = cancel_booking(booking_id)
     return result
 
 
 if __name__ == '__main__':
-   app.run(debug=True)
-
+    app.run(debug=True)
