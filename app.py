@@ -24,24 +24,24 @@ def get_schedule(stylist_id, date):
 
 # Creating a new customer in the database
 # Define a route to add a new customer to the database using POST method
-@app.route("/add_new_client", methods=["POST"])
-def add_client():
+@app.route("/add_new_customer", methods=["POST"])
+def add_customer():
     # Accepts POST requests with JSON data containing customer information
-    client = request.get_json()
+    customer = request.get_json()
     # Calls  the 'add_new_customer' function with customer information and retrieves the new customer's ID
     # and returns created customer's ID as a JSON response
-    client_id = add_new_customer(
-        first_name=client["first_name"],
-        last_name=client["last_name"],
-        mobile=client["mobile"],
-        email=client["email"],
+    customer_id = add_new_customer(
+        first_name=customer["first_name"],
+        last_name=customer["last_name"],
+        mobile=customer["mobile"],
+        email=customer["email"],
     )
-    return jsonify(client_id)
+    return jsonify(customer_id)
 
 
 # Creating a new booking with POST method
 @app.route("/add_new_booking", methods=["POST"])
-def add_appt():
+def add_booking():
     booking = request.get_json()
     booking_id = add_new_booking(
         customer_id=booking["customer_id"],
@@ -54,9 +54,9 @@ def add_appt():
 
 
 # Cancelling an existing booking with DELETE method
-@app.route("/cancel_booking/<booking_id>", methods=["DELETE"])
-def cancel_appt(booking_id):
-    result = cancel_booking(booking_id)
+@app.route("/cancel_booking/<customer_id>/<booking_id>", methods=["DELETE"])
+def cancel_existing_booking(customer_id, booking_id):
+    result = cancel_booking(customer_id, booking_id)
     return result
 
 
