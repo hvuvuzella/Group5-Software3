@@ -28,7 +28,7 @@ You will require the following packages to run our API:
 To install the packages, open the terminal in **PyCharm**. 
 Make sure you are in your `pipenv` by typing `pipenv shell`.
 
-Type `pip install <packge name>`
+Type `pip install <package name>`
 
 Alternatively, you can install packages through Python Interpreter in your Settings menu.
 
