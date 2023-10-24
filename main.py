@@ -75,7 +75,7 @@ def run():
                                 "\nWelcome to THE CUT, where you can get all of your hair needs in one place"
                                 "\n*************************************************************************"
                                 "\n\nTo start, you can log in as a STYLIST to view your booking schedules by date,"
-                                "\nOR log in as a CUSTOMER to create an account, and create or cancel your bookings."
+                                "\nOR log in as a CUSTOMER to create an account, view, create or cancel your bookings."
                                 "\n\nPlease choose one of the following options: type S for STYLIST, or C for "
                                 "CUSTOMER: ")
 
