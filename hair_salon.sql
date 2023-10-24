@@ -227,23 +227,24 @@ DELIMITER ;
 /* STORED PROCEDURE TO CANCEL BOOKINGS: bookings can only be cancelled if the booking exists in the first place */
 
 DELIMITER //
-CREATE PROCEDURE CancelBooking( -- input parameters
-	IN a_booking_id INT
+CREATE PROCEDURE CancelBooking(
+    IN a_customer_id INT,
+    IN a_booking_id INT
 )
 BEGIN
-	-- check if bookings exists:
+    -- Check if booking exists for the provided customer and booking ID:
     DECLARE booking_exists INT;
-    SELECT COUNT(*) INTO booking_exists FROM bookings WHERE id = a_booking_id;
+    SELECT COUNT(*) INTO booking_exists FROM bookings
+    WHERE id = a_booking_id AND customer_ID = a_customer_id;
 
-    -- if booking does not exist, then throw error:
+    -- If booking does not exist, then throw an error:
     IF booking_exists = 0 THEN
         SIGNAL SQLSTATE 'UPAT1' -- unique error code
-        SET MESSAGE_TEXT = 'Error: Booking not found. Please provide a valid booking ID';
+        SET MESSAGE_TEXT = 'Error: Booking not found. Please provide a valid customer ID and booking ID';
     ELSE
-
-		-- otherwise, if booking does exist, then allow to delete data (i.e. cancel booking):
-		DELETE FROM bookings WHERE id = a_booking_id;
-	END IF;
+        -- Otherwise, if the booking does exist, then allow deleting the data (i.e., cancel booking):
+        DELETE FROM bookings WHERE id = a_booking_id;
+    END IF;
 END;
 //
 DELIMITER ;
@@ -371,18 +372,18 @@ CALL UpdateBooking(1, 1, 1, 1, '2023-11-01', '10:30:00'); -- booking can be upda
 -- CALL UpdateBooking(6, 6, 2, 10, '2023-11-04', '17:45:00'); -- booking will run over close time
 
 -- finally, see all bookings AFTER updating booking:
-SELECT * FROM booking_list_by_id; 
+SELECT * FROM booking_list_by_id;
 
 
 /* CANCEL(DELETE) EXISTING BOOKINGS - delete existing data in bookings table by calling stored procedure created above,
-in the format: CALL CancelBooking(booking_id); */
+in the format: CALL CancelBooking(customer_id, booking_id); */
 
 -- see all bookings BEFORE cancellation
 SELECT * FROM booking_list_by_id; -- see the VIEW
 
-CALL CancelBooking(10);
+CALL CancelBooking(10, 10);
 -- These queries underneath will not work as they fail conditions set in procedure. Uncomment to try:
--- CALL CancelBooking(50); -- booking does not exist
+-- CALL CancelBooking(1, 50); -- booking does not exist
 
 -- see all bookings AFTER cancellation
 SELECT * FROM booking_list_by_id;-- see the VIEW
