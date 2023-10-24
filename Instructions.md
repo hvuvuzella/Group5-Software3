@@ -6,13 +6,13 @@ Please see the information below for details on how to run our API.
 
 ## Files you will need
 
-Please open the following files in PyCharm:
+Please import the project into PyCharm. The files you will be using are:
 - app.py
 - main.py
 - db_utils.py
 - config.py
 
-Please open the following files in MySQL Workbench:
+Please run the following file in MySQL Workbench:
 - hair_salon.sql
 
 ---
@@ -60,7 +60,7 @@ Once you have completed these steps, you are now ready to run the code and use t
 
 ## What to expect
 As you navigate the API, there are a number of outcomes you should expect. See the flowchart below:
-![API Workflow](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/ee6d784e-b531-46ca-a3bb-5457f9b380c5)
+![Final Workflow](https://github.com/hvuvuzella/Group5-Software3/assets/145285143/8cd0f6f5-5ed4-4bcf-a068-5ba41b03fa18)
 
 --- 
 ### Thank you for using our API, we hope you enjoy it! 😁
