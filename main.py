@@ -96,9 +96,10 @@ def run():
                     f"Customer name: {booking['name']} {booking['last_name']}, Mobile: {booking['phone']}, Treatment: {booking['treatment']}, Time slot: {booking['time']}.\n"
                 )
             print(f"\nYou have the following bookings for this date:\n\n{''.join(stylist_bookings)}")
+            print("To login as a Customer, please restart and login again :)")
 
     # If the user logs in as a customer, they are prompted to register by providing their information
-    if stylist_or_customer == "C" or stylist_or_customer == "c":
+    elif stylist_or_customer == "C" or stylist_or_customer == "c":
         registered_user = input("Are you a registered customer?(Y/N): ")
 
         if registered_user == "N" or registered_user == "n":
@@ -184,6 +185,20 @@ def run():
                 booking_id = input("Enter your appointment id: ")
                 result = cancel_booking(booking_id)
                 print(f"You booking with booking ID: {booking_id} was successfully cancelled.")
+
+            else:
+                print("Invalid choice. Please enter 'view', 'book', or 'cancel'.")
+
+        else:
+            print("Invalid choice. Please enter 'Y' or 'N'.")
+
+    else:
+        print("Invalid choice. Please enter 'S' or 'C'.")
+
+    # After each loop ends, check if the user wants to run the script again
+    user_input = input("\nWould you like to restart and login again? (Y/N): ")
+    if user_input == "Y" or user_input == "y":
+        run()  # Restart the script
 
 
 if __name__ == '__main__':
