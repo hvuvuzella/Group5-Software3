@@ -115,7 +115,7 @@ BEGIN
 					)
 				) THEN
 					SIGNAL SQLSTATE 'CLASH' -- unique error code
-					SET MESSAGE_TEXT = 'Error: This booking will clash with an already exisiting booking Please choose another time';
+					SET MESSAGE_TEXT = 'Error: This booking will clash with an already existing booking Please choose another time';
 				ELSE
 					-- If no errors are found, then insert new booking to bookings table:
 					INSERT INTO bookings (customer_id, stylist_id, treatment_id, booking_date, booking_time)
@@ -132,7 +132,7 @@ END;
 DELIMITER ;
 
 
-/* STORED PROCEDURE TO UPDATE/CHANGE EXISITNG BOOKINGS: */
+/* STORED PROCEDURE TO UPDATE/CHANGE EXISTING BOOKINGS: */
 
 DELIMITER //
 CREATE PROCEDURE UpdateBooking( -- input parameters for stored procedure:
@@ -185,7 +185,7 @@ BEGIN -- local variables to use in procedure:
 				SIGNAL SQLSTATE '2LATE' -- unique error code
 				SET MESSAGE_TEXT = 'Error: the booking will finish after the salon is closed, please choose an earlier time';
 			ELSE
-				-- if not, see if the booking clashes with an exisitng booking:
+				-- if not, see if the booking clashes with an existing booking:
 				IF EXISTS (
 					SELECT 1
 					FROM bookings
@@ -197,9 +197,9 @@ BEGIN -- local variables to use in procedure:
 					)
 				) THEN
 					SIGNAL SQLSTATE 'CLASH' -- unique error code
-					SET MESSAGE_TEXT = 'Error: This booking will clash with an already exisiting booking Please choose another time';
+					SET MESSAGE_TEXT = 'Error: This booking will clash with an already existing booking Please choose another time';
 				ELSE
-					-- If no errors are found, then update exisitng booking in bookings table:
+					-- If no errors are found, then update existing booking in bookings table:
 					UPDATE bookings
 					SET id = a_booking_id,
 						customer_id = a_customer_id,
@@ -339,8 +339,8 @@ CALL AddNewBooking(8, 3, 4, '2023-11-05', '14:00:00');
 CALL AddNewBooking(9, 2, 7, '2023-11-08', '15:30:00');
 CALL AddNewBooking(10, 3, 8, '2023-11-09', '12:30:00');
 CALL AddNewBooking(8, 1, 3, '2023-11-01', '11:30:00'); -- booking can be made to start at the same time another booking ends (neater scheduling. e.g. one existing booking ends at 11:30 but this new booking can also be made for 11:30)
--- These queries underneath will not work as they fail coniditions set in procedure. Uncomment to try:
--- CALL AddNewBooking(100, 2, 1, '2023-11-09', '16:00:00'); -- custeomer id does not exist, either enter a valid id or create new customer
+-- These queries underneath will not work as they fail conditions set in procedure. Uncomment to try:
+-- CALL AddNewBooking(100, 2, 1, '2023-11-09', '16:00:00'); -- customer id does not exist, either enter a valid id or create new customer
 -- CALL AddNewBooking(1, 1, 5, '2023-10-31', '20:00:00'); -- outside salon opening times
 -- CALL AddNewBooking(1, 1, 5, '2023-10-31', '07:00:00'); -- booking time is before the salon opens
 -- CALL AddNewBooking(1, 1, 5, '2023-11-01', '09:15:00'); -- clashes with an existing booking
@@ -379,7 +379,7 @@ in the format: CALL CancelBooking(booking_id); */
 SELECT * FROM booking_list_by_id; -- see the VIEW
 
 CALL CancelBooking(10);
--- These queries underneath will not work as they fail coniditions set in procedure. Uncomment to try:
+-- These queries underneath will not work as they fail conditions set in procedure. Uncomment to try:
 -- CALL CancelBooking(50); -- booking does not exist
 
 -- see all bookings AFTER cancellation
