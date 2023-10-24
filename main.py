@@ -111,7 +111,7 @@ def run():
             customer_id = add_client(client_name, client_last_name, client_mobile, client_email)
             print(
                 f"\nFab! You are now signed up, with a customer ID of: {customer_id['customer_id']}. "
-                f"\n\nPlease mate note of this customer ID so that you can view, create and cancel your bookings."
+                f"\n\nPlease make note of this customer ID so that you can view, create and cancel your bookings."
                 f"\n\nTo view, create or cancel bookings, please restart and login again as an existing customer!")
 
         elif registered_user == "Y" or registered_user == "y":
@@ -182,9 +182,9 @@ def run():
                     f"please login again and follow the on-screen instructions! :)")
 
             elif customer_choice == "cancel":
-                booking_id = input("Enter your appointment id: ")
+                booking_id = input("Enter your booking id: ")
                 result = cancel_booking(booking_id)
-                print(f"You booking with booking ID: {booking_id} was successfully cancelled.")
+                print(f"Your booking with booking ID: {booking_id} was successfully cancelled.")
 
             else:
                 print("Invalid choice. Please enter 'view', 'book', or 'cancel'.")

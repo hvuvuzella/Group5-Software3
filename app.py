@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
 from db_utils import get_stylist_schedule, add_new_customer, add_new_booking, cancel_booking, \
-    show_user_appointments  # imports two specific functions from a module db_utils
+    show_user_appointments  # imports specific functions from a module db_utils
 
 # Define a Flask web application
 app = Flask(__name__)

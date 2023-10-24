@@ -63,3 +63,8 @@ we can demonstrate it
   - Each line in a gitignore file specifies a pattern. When deciding whether to ignore a path, Git normally checks gitignore patterns from multiple sources, with the following order of precedence, from highest to lowest.
 
 ---
+
+- ## For our API, an [Instructions.md file](Instructions.md) was created:
+  - Please follow the instrutions in this file before using the API as it contains useful information about setting up and running the files
+
+---
