@@ -110,8 +110,8 @@ BEGIN
 					WHERE stylist_id = a_stylist_id
 					AND booking_date = a_booking_date
 					AND (
-						(a_booking_time BETWEEN booking_time AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
-						OR (booking_time_finish BETWEEN booking_time AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
+						(a_booking_time BETWEEN booking_time AND SUBTIME(ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)), '00:00:01'))
+						OR (booking_time_finish BETWEEN ADDTIME(booking_time, '00:00:01') AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
 					)
 				) THEN
 					SIGNAL SQLSTATE 'CLASH' -- unique error code
@@ -149,28 +149,28 @@ BEGIN -- local variables to use in procedure:
 	DECLARE b_open_time TIME;
 	DECLARE b_close_time TIME;
     DECLARE treatment_duration TIME;
-    
+
 	-- retrieve salon opening times for the booking date
 	SELECT open_time, close_time
 	INTO b_open_time, b_close_time
 	FROM opening_times
 	WHERE week_day = DAYNAME(a_booking_date);
-    
+
 	-- get duration of the treatment for the updated booking:
 	SELECT duration
     INTO treatment_duration
     FROM treatments
     WHERE id = (SELECT treatment_id FROM bookings WHERE id = a_booking_id);
-    
+
 	-- add booking start time and the duration of treatment to work out what time the booking will finish:
     SET new_booking_finish_time = ADDTIME(a_booking_time, treatment_duration);
-    
+
 	-- Check if the booking exists by counting how many bookings there are for the booking_id in question:
-    SELECT COUNT(*) 
-    INTO booking_exists 
+    SELECT COUNT(*)
+    INTO booking_exists
     FROM bookings
     WHERE id = a_booking_id;
-    
+
     -- If the booking does not exist (count returned 0 rows of data), then throw an error:
     IF booking_exists = 0 THEN
         SIGNAL SQLSTATE 'UPAT1' -- unique error code
@@ -179,7 +179,7 @@ BEGIN -- local variables to use in procedure:
         -- Check if the new booking time falls within salon opening hours:
         IF b_open_time IS NOT NULL AND b_close_time IS NOT NULL AND -- check that the salon is not closed
            TIME(a_booking_time) BETWEEN b_open_time AND b_close_time THEN -- check that the booking start time is between open and close time
-           
+
            -- check if the booking finishes after the salon is closed
 			IF new_booking_finish_time > b_close_time THEN
 				SIGNAL SQLSTATE '2LATE' -- unique error code
@@ -192,8 +192,8 @@ BEGIN -- local variables to use in procedure:
 					WHERE stylist_id = a_stylist_id
                     AND booking_date = a_booking_date
 					AND (
-						(a_booking_time BETWEEN booking_time AND ADDTIME(booking_time, treatment_duration))
-						OR (new_booking_finish_time BETWEEN booking_time AND ADDTIME(booking_time, treatment_duration))
+						(a_booking_time BETWEEN booking_time AND SUBTIME(ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)), '00:00:01'))
+						OR (new_booking_finish_time BETWEEN ADDTIME(booking_time, '00:00:01') AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
 					)
 				) THEN
 					SIGNAL SQLSTATE 'CLASH' -- unique error code
@@ -208,7 +208,7 @@ BEGIN -- local variables to use in procedure:
 						booking_date = a_booking_date,
 						booking_time = a_booking_time
 					WHERE id = a_booking_id;
-                    
+
                     SET a_booking_id = LAST_INSERT_ID(); -- Retrieve the last inserted ID - for use in Python later
 				END IF;
 			END IF;
@@ -232,13 +232,13 @@ BEGIN
 	-- check if bookings exists:
     DECLARE booking_exists INT;
     SELECT COUNT(*) INTO booking_exists FROM bookings WHERE id = a_booking_id;
-    
+
     -- if booking does not exist, then throw error:
     IF booking_exists = 0 THEN
         SIGNAL SQLSTATE 'UPAT1' -- unique error code
         SET MESSAGE_TEXT = 'Error: Booking not found. Please provide a valid booking ID';
     ELSE
-    
+
 		-- otherwise, if booking does exist, then allow to delete data (i.e. cancel booking):
 		DELETE FROM bookings WHERE id = a_booking_id;
 	END IF;
@@ -246,7 +246,7 @@ END;
 //
 DELIMITER ;
 
-/* STORED PROCEDURE TO SEE ALL OF A STYLIST'S SCHEDULED BOOKINGS FOR A GIVEN DAY, 
+/* STORED PROCEDURE TO SEE ALL OF A STYLIST'S SCHEDULED BOOKINGS FOR A GIVEN DAY,
 displaying customers's full name, mobile, the treatment they are having and their booking start and finish time:  */
 
 DELIMITER //
@@ -256,12 +256,12 @@ CREATE PROCEDURE GetStylistSchedule( -- arguments for procedure when calling it:
 )
 BEGIN
 	-- select relevant data from bookings to display
-    SELECT 
-		a.id, 
-        c.first_name AS customer_first_name, 
-        c.last_name AS customer_last_name, 
-        c.mobile AS customer_mobile, 
-        t.name AS treatment_name, 
+    SELECT
+		a.id,
+        c.first_name AS customer_first_name,
+        c.last_name AS customer_last_name,
+        c.mobile AS customer_mobile,
+        t.name AS treatment_name,
         a.booking_time, ADDTIME(a.booking_time, t.duration) AS booking_end_time -- calculate booking finish time
 	-- Join the 'bookings' table with the 'customers' and 'treatments' tables
     FROM bookings AS a
@@ -290,14 +290,14 @@ VALUES
     ('Jimi', 'Hendrix', '07958844687', 'jimi.hendrix@email.com'),
     ('David', 'Bowie', '07845698715', 'david.bowie@egmail.com'),
     ('Lana', 'Del Rey', '07546668745', 'lana.del.rey@email.com');
-    
+
 INSERT INTO stylists (first_name, last_name, mobile)
 VALUES
 	('Erika', 'Tatchyn', '0798865432'),
     ('Hannah', 'Magee', '0774566874'),
     ('Kate', 'Losyeva', '0779654478');
     -- no more stylists needed for this table
-    
+
 INSERT INTO salon_info (salon_name, telephone, email, address)
 VALUES
 	('THE CUT', '0208988652', 'info@thecut.co.uk', '52 Archer Street, Soho, London, W1 4HG');
@@ -315,7 +315,7 @@ VALUES
 
 INSERT INTO treatments (name, description, price, duration)
 VALUES
-	('Blowdry', 'Blowdry styling only', 30.00, '00:25:00'),
+	('Blowdry', 'Blowdry styling only', 30.00, '00:30:00'),
 	('Dry Cut', 'Dry cut on clean hair', 50.00, '00:30:00'),
 	('Wash & Blowdry', 'Hair wash, and blowdry styling', 40.00, '00:30:00'),
     ('Dry Cut & Blowdry', 'Dry cut and blowdry styling', 60.00, '00:45:00'),
@@ -338,6 +338,7 @@ CALL AddNewBooking(7, 3, 9, '2023-11-04', '10:30:00');
 CALL AddNewBooking(8, 3, 4, '2023-11-05', '14:00:00');
 CALL AddNewBooking(9, 2, 7, '2023-11-08', '15:30:00');
 CALL AddNewBooking(10, 3, 8, '2023-11-09', '12:30:00');
+CALL AddNewBooking(8, 1, 3, '2023-11-01', '11:30:00'); -- booking can be made to start at the same time another booking ends (neater scheduling. e.g. one existing booking ends at 11:30 but this new booking can also be made for 11:30)
 -- These queries underneath will not work as they fail coniditions set in procedure. Uncomment to try:
 -- CALL AddNewBooking(100, 2, 1, '2023-11-09', '16:00:00'); -- custeomer id does not exist, either enter a valid id or create new customer
 -- CALL AddNewBooking(1, 1, 5, '2023-10-31', '20:00:00'); -- outside salon opening times
@@ -356,14 +357,14 @@ in the format: CALL UpdateBooking(booking_id, customer_id, stylist_id, treatment
 CREATE VIEW booking_list_by_id AS
 SELECT * FROM bookings
 ORDER BY id;
-SELECT * FROM booking_list_by_id; 
+SELECT * FROM booking_list_by_id;
 
 -- now update bookings:
-CALL UpdateBooking(1, 1, 1, 1, '2023-11-01', '09:30:00'); 
--- These queries underneath will not work as they fail coniditions set in procedure. Uncomment to try:
+CALL UpdateBooking(1, 1, 1, 1, '2023-11-01', '10:30:00'); -- booking can be updated to end when an another existing booking starts at 11:00. Treatment (id=4) has a duration of 30 mins
+-- These queries underneath will not work as they fail conditions set in procedure. Uncomment to try:
 -- CALL UpdateBooking(2, 2, 1, 3, '2023-11-01', '11:05:00');  -- clashes with an existing booking
 -- CALL UpdateBooking(3, 3, 1, 5, '2023-11-02', '14:15:00'); -- clashes with an existing booking
--- CALL UpdateBooking(5, 5, 1, 7, '2023-11-02', '13:15:00'); -- cclashes with an existing booking
+-- CALL UpdateBooking(5, 5, 1, 7, '2023-11-02', '13:15:00'); -- clashes with an existing booking
 -- CALL UpdateBooking(5, 5, 2, 1, '2023-11-06', '14:00:00'); -- booking time isn't within open and close time
 -- CALL UpdateBooking(6, 6, 2, 10, '2023-11-04', '17:45:00'); -- booking will run over close time
 
