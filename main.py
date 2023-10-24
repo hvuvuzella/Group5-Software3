@@ -80,7 +80,8 @@ def run():
                                     "\nWelcome to THE CUT, where you can get all of your hair needs in one place"
                                     "\n*************************************************************************"
                                     "\n\nTo start, you can log in as a STYLIST to view your booking schedules by date,"
-                                    "\nOR log in as a CUSTOMER to create an account, view, create or cancel your bookings."
+                                    "\nOR log in as a CUSTOMER to create an account, view, create or cancel your "
+                                    "bookings."
                                     "\n\nPlease choose one of the following options: type S for STYLIST, or C for "
                                     "CUSTOMER: ")
 
@@ -88,23 +89,25 @@ def run():
         if stylist_or_customer == "S" or stylist_or_customer == "s":
             stylist_to_check_schedule = input("Please choose whose booking schedule you'd like to see:\n"
                                               "Type 1 for Erika, 2 for Hannah, or 3 for Kate's schedule. ")
-            if stylist_to_check_schedule < 1 or stylist_to_check_schedule > 3:
-                exit()
 
-            date_to_check_schedule = input("Just a reminder, we are closed on Mondays and Tuesdays!"
-                                           "\nPlease enter the date of the bookings you'd like to see in YYYY-MM-DD "
-                                           "format (e.g. 2023-11-01): ")
-            stylist_schedule = get_stylist_schedule_by_date(stylist_to_check_schedule, date_to_check_schedule)
-            if len(stylist_schedule["data"]) == 0:
-                print("There are currently no bookings scheduled for this date.")
+            if stylist_to_check_schedule not in ["1", "2", "3"]:
+                print("Error. Please enter either 1, 2, or 3")
+
             else:
-                stylist_bookings = []
-                for booking in stylist_schedule["data"]:
-                    stylist_bookings.append(
-                        f"Customer name: {booking['name']} {booking['last_name']}, Mobile: {booking['phone']}, Treatment: {booking['treatment']}, Time slot: {booking['time']}.\n"
-                    )
-                print(f"\nYou have the following bookings for this date:\n\n{''.join(stylist_bookings)}")
-                print("To login as a Customer, please restart and login again :)")
+                date_to_check_schedule = input("Just a reminder, we are closed on Mondays and Tuesdays!"
+                                               "\nPlease enter the date of the bookings you'd like to see in YYYY-MM-DD"
+                                               "format (e.g. 2023-11-01): ")
+                stylist_schedule = get_stylist_schedule_by_date(stylist_to_check_schedule, date_to_check_schedule)
+                if len(stylist_schedule["data"]) == 0:
+                    print("There are currently no bookings scheduled for this date.")
+                else:
+                    stylist_bookings = []
+                    for booking in stylist_schedule["data"]:
+                        stylist_bookings.append(
+                            f"Customer name: {booking['name']} {booking['last_name']}, Mobile: {booking['phone']}, Treatment: {booking['treatment']}, Time slot: {booking['time']}.\n"
+                        )
+                    print(f"\nYou have the following bookings for this date:\n\n{''.join(stylist_bookings)}")
+                    print("To login as a Customer, please restart and login again :)")
 
         # If the user logs in as a customer, they are prompted to register by providing their information
         elif stylist_or_customer == "C" or stylist_or_customer == "c":
@@ -124,8 +127,8 @@ def run():
 
             elif registered_user == "Y" or registered_user == "y":
                 customer_choice = input(
-                    "\nWelcome back! Would you like to view your bookings (view), make a new booking (book), or cancel an "
-                    "existing booking (cancel)?"
+                    "\nWelcome back! Would you like to view your bookings (view), make a new booking (book), "
+                    "or cancel an existing booking (cancel)?"
                     "\nChoose by typing 'view', 'book' or cancel' ")
 
                 if customer_choice == "view":
@@ -138,7 +141,8 @@ def run():
                         bookings = get_bookings(reg_customer_id)
 
                         if len(bookings["data"]) == 0:
-                            print("\nYou currently have no bookings with us. Feel free to login again to make a booking!")
+                            print("\nYou currently have no bookings with us. Feel free to login again to make a "
+                                  "booking!")
 
                         else:
                             all_bookings = []
@@ -148,8 +152,8 @@ def run():
                                     f"Treatment: {booking['treatment']} - Stylist: {booking['stylist_name']} - Date: {booking['date']} - Time: {booking['time']}>"
                                     f" || <CUSTOMER ID: {reg_customer_id}, BOOKING ID: {booking['booking_id']}>")
                             print(f"\nYOUR BOOKINGS:"
-                                  f"\np.s. Please make note of your customer & booking IDs for future use! (e.g. to make or "
-                                  f"cancel bookings)"
+                                  f"\np.s. Please make note of your customer & booking IDs for future use! (e.g. to "
+                                  f"make or cancel bookings)"
                                   f"\n{'. '.join(all_bookings)}"
                                   f"\n\nTo cancel any of these bookings, please login again and follow the on-screen "
                                   f"instructions")
@@ -164,8 +168,8 @@ def run():
                     treatment_id = int(input("\nMake your choice by entering a number between 1-10 (e.g For Wash, "
                                              "Cut & Blowdry, enter 5): "))
                     booking_date = input(
-                        "\nEnter the date you'd like to book, in the format YYYY-MM-DD (p.s. we are CLOSED on Mondays and "
-                        "Tuesdays): ")
+                        "\nEnter the date you'd like to book, in the format YYYY-MM-DD (p.s. we are CLOSED on Mondays "
+                        "and Tuesdays): ")
                     stylist_schedule = get_stylist_schedule_by_date(stylist_id, booking_date)
                     print("""\nSALON OPENING HOURS:
                     09:00 - 18:00 (Wed, Thu, Fri)
@@ -190,8 +194,8 @@ def run():
                     booking_id = add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time)
                     print(f"\nCongratulations! Booking confirmed. Your booking is on {booking_date} at {booking_time}")
                     print(
-                        f"\nYour BOOKING ID is {booking_id['Booking_id']}. Please make note of this booking ID so that you "
-                        f"can cancel your booking if needed!"
+                        f"\nYour BOOKING ID is {booking_id['Booking_id']}. Please make note of this booking ID so "
+                        f"that you can cancel your booking if needed!"
                         f"\n\nIf you'd like to view your bookings or make another booking, or cancel existing bookings, "
                         f"please login again and follow the on-screen instructions! :)")
 
