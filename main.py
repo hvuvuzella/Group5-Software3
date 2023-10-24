@@ -39,7 +39,7 @@ def get_bookings(customer_id):
     return user_bookings.json()
 
 
-# Sending request to endpoint to add new appointment
+# Sending request to endpoint to add new booking
 def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
     booking = {
         "customer_id": customer_id,
@@ -58,7 +58,7 @@ def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_tim
     return result.json()
 
 
-# Sending request to endpoint to cancel appointment
+# Sending request to endpoint to cancel an existing booking
 def cancel_booking(booking_id):
     result = requests.delete(
         "http://127.0.0.1:5000/cancel_booking/{}".format(booking_id),
