@@ -20,16 +20,17 @@ def _connect_to_db(db_name):
 # Define function for changing booking data for each booking into dictionaries for easier handling
 def booking_change(appointments):
     bookings = []
-    for app in appointments:
+    for i in appointments:
         bookings.append(
             {
-                "person_id": app[0],
-                "name": app[1],
-                "last_name": app[2],
-                "app_id": app[3],
-                "treatment": app[4],
-                "date": str(app[5]),
-                "time": str(app[6])
+                "customer_id": i[0],
+                "first_name": i[1],
+                "last_name": i[2],
+                "booking_id": i[3],
+                "treatment": i[4],
+                "stylist_name": i[7],
+                "date": str(i[5]),
+                "time": str(i[6])
             }
         )
     return bookings
@@ -231,13 +232,15 @@ def show_user_appointments(customer_id):
         print(f"Connected to database: {db_name}")
 
         # Execute query for getting all the bookings
-        select_query = ("""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.treatment_id) as treatment,
-                                b.booking_date, b.booking_time FROM bookings b INNER JOIN customers c ON c.id = b.customer_id 
-                                WHERE  c.id = {}""".format(int(customer_id)))
+        select_query = (f"""SELECT c.id, c.first_name, c.last_name, b.id, (SELECT name FROM treatments WHERE id = b.treatment_id) as treatment,
+                                b.booking_date, b.booking_time, s.first_name as stylist_name FROM bookings b JOIN customers c ON c.id = b.customer_id
+                                JOIN stylists s  ON s.id = b.stylist_id
+                                WHERE  c.id = {int(customer_id)}""")
         cursor.execute(select_query)
         results = cursor.fetchall()
         cursor.close()
         new_list = booking_change(results)
+        print(new_list)
 
     except Exception:
         raise DbConnectionError("Failed to fetch data from DB")
@@ -291,6 +294,9 @@ def main():
 
     # Retrieve and display the schedule for a stylist on a specific date
     get_stylist_schedule(1, "2023-11-01")
+
+    # Show customer's existing bookings by id:
+    show_user_appointments(1)
 
 
 if __name__ == '__main__':
