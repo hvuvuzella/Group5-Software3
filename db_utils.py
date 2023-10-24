@@ -52,6 +52,44 @@ def stylist_booking_change(bookings):
     return stylist_bookings
 
 
+# Define a function to check if a customer with a given ID exists in the database
+def customer_exists(customer_id):
+    try:
+        # Establish a connection to the 'hair_salon' database
+        db_name = "hair_salon"
+        db_connection = mysql.connector.connect(
+            host=HOST,
+            user=USER,
+            password=PASSWORD,
+            auth_plugin="mysql_native_password",
+            database=db_name
+        )
+        cursor = db_connection.cursor()
+
+        # Execute a query to check if the customer exists
+        query = "SELECT id FROM customers WHERE id = %s"
+        cursor.execute(query, (customer_id,))
+
+        # Fetch the result (customer ID) from the query
+        result = cursor.fetchone()
+
+        if result:
+            # Customer exists
+            print(f"Customer with ID {customer_id} exists in the database.")
+            return True
+        else:
+            # Customer does not exist
+            print(f"Customer with ID {customer_id} does not exist in the database.")
+            return False
+
+    except Exception as e:
+        raise DbConnectionError("Failed to check if the customer exists in the database")
+
+    finally:
+        if db_connection:
+            db_connection.close()
+
+
 # Define function that adds new customer to DB and print relative message
 def add_new_customer(first_name, last_name, mobile, email):
     try:
@@ -296,6 +334,10 @@ def main():
 
     # Show customer's existing bookings by id:
     show_user_appointments(1)
+
+    # Check the below customer_id's exists (5 does, 100 does not)
+    customer_exists(5)
+    customer_exists(100)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 import requests  # import module for requesting API
 import json  # import module to work with json data
-from db_utils import get_all_treatments  # import the module
+from db_utils import get_all_treatments, customer_exists  # import the module
 
 
 # Sending an HTTP GET request to the endpoint to get stylist schedule for specific date
@@ -59,14 +59,6 @@ def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_tim
 
 
 # Sending and HTTP DELETE request to endpoint to cancel an existing booking
-# def cancel_booking(customer_id, booking_id):
-#     result = requests.delete(
-#         "http://127.0.0.1:5000/cancel_booking/{}/{}".format(customer_id, booking_id),
-#         headers={"content-type": "application/json"},
-#     )
-#     print("Booking cancelled successfully")
-#
-#     return result
 def cancel_booking(customer_id, booking_id):
     url = "http://127.0.0.1:5000/cancel_booking/{}/{}".format(customer_id, booking_id)
     headers = {"content-type": "application/json"}
@@ -138,24 +130,29 @@ def run():
 
                 if customer_choice == "view":
                     reg_customer_id = input("\nPlease enter your CUSTOMER ID: ")
-                    bookings = get_bookings(reg_customer_id)
 
-                    if len(bookings["data"]) == 0:
-                        print("\nYou currently have no bookings with us. Feel free to login again to make a booking!")
+                    if not customer_exists(reg_customer_id):
+                        print("Customer not found. Please enter a valid CUSTOMER ID.")
 
                     else:
-                        all_bookings = []
-                        for booking in bookings["data"]:
-                            all_bookings.append(
-                                f"\n<Customer Name: {booking['first_name']} {booking['last_name']} - "
-                                f"Treatment: {booking['treatment']} - Stylist: {booking['stylist_name']} - Date: {booking['date']} - Time: {booking['time']}>"
-                                f" || <CUSTOMER ID: {reg_customer_id}, BOOKING ID: {booking['booking_id']}>")
-                        print(f"\nYOUR BOOKINGS:"
-                              f"\np.s. Please make note of your customer & booking IDs for future use! (e.g. to make or "
-                              f"cancel bookings)"
-                              f"\n{'. '.join(all_bookings)}"
-                              f"\n\nTo cancel any of these bookings, please login again and follow the on-screen "
-                              f"instructions")
+                        bookings = get_bookings(reg_customer_id)
+
+                        if len(bookings["data"]) == 0:
+                            print("\nYou currently have no bookings with us. Feel free to login again to make a booking!")
+
+                        else:
+                            all_bookings = []
+                            for booking in bookings["data"]:
+                                all_bookings.append(
+                                    f"\n<Customer Name: {booking['first_name']} {booking['last_name']} - "
+                                    f"Treatment: {booking['treatment']} - Stylist: {booking['stylist_name']} - Date: {booking['date']} - Time: {booking['time']}>"
+                                    f" || <CUSTOMER ID: {reg_customer_id}, BOOKING ID: {booking['booking_id']}>")
+                            print(f"\nYOUR BOOKINGS:"
+                                  f"\np.s. Please make note of your customer & booking IDs for future use! (e.g. to make or "
+                                  f"cancel bookings)"
+                                  f"\n{'. '.join(all_bookings)}"
+                                  f"\n\nTo cancel any of these bookings, please login again and follow the on-screen "
+                                  f"instructions")
 
                 elif customer_choice == "book":
                     customer_id = int(input("Enter your CUSTOMER ID: "))
