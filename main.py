@@ -83,8 +83,9 @@ def run():
     if stylist_or_customer == "S" or stylist_or_customer == "s":
         stylist_to_check_schedule = input("Please choose whose booking schedule you'd like to see:\n"
                                           "Type 1 for Erika, 2 for Hannah, or 3 for Kate's schedule. ")
-        date_to_check_schedule = input("Please enter the date of the bookings you'd like to see in YYYY-MM-DD format"
-                                       "\n p.s. the salon is closed on Mondays and Tuesdays: ")
+        date_to_check_schedule = input("Just a reminder, we are closed on Mondays and Tuesdays!"
+                                       "\nPlease enter the date of the bookings you'd like to see in YYYY-MM-DD "
+                                       "format (e.g. 2023-11-01): ")
         stylist_schedule = get_stylist_schedule_by_date(stylist_to_check_schedule, date_to_check_schedule)
         if len(stylist_schedule["data"]) == 0:
             print("There are currently no bookings scheduled for this date.")
@@ -94,7 +95,7 @@ def run():
                 stylist_bookings.append(
                     f"Customer name: {booking['name']} {booking['last_name']}, Mobile: {booking['phone']}, Treatment: {booking['treatment']}, Time slot: {booking['time']}.\n"
                 )
-            print(f"You have the following bookings for this date:\n{''.join(stylist_bookings)}")
+            print(f"\nYou have the following bookings for this date:\n\n{''.join(stylist_bookings)}")
 
     # If the user logs in as a customer, they are prompted to register by providing their information
     if stylist_or_customer == "C" or stylist_or_customer == "c":
@@ -132,9 +133,11 @@ def run():
                             f"\n<Name: {booking['name']} {booking['last_name']} - "
                             f"Treatment: {booking['treatment']} - Date: {booking['date']} - Time: {booking['time']}>"
                             f" || <CUSTOMER ID: {reg_customer_id}, BOOKING ID: {booking['app_id']}>")
-                    print(f"\nYOUR BOOKINGS:\n\n{'. '.join(all_bookings)}"
-                          f"\n\np.s. Please make note of your customer & booking IDs for future use! (e.g. to make or "
-                          f"cancel bookings)")
+                    print(f"\nYOUR BOOKINGS:"
+                          f"\np.s. Please make note of your customer & booking IDs for future use! (e.g. to make or "
+                          f"cancel bookings)"
+                          f"\n{'. '.join(all_bookings)}"
+                          f"\n\nTo cancel any of these bookings, please login again and follow the relevant instructions")
 
             elif customer_choice == "book":
                 customer_id = int(input("Enter your CUSTOMER ID: "))
@@ -176,9 +179,8 @@ def run():
             elif customer_choice == "cancel":
                 booking_id = input("Enter your appointment id: ")
                 result = cancel_booking(booking_id)
-                print(result)
+                print(f"You booking with booking ID: {booking_id} was successfully cancelled.")
 
 
 if __name__ == '__main__':
     run()
-    # add_booking(2, 1, 2, '2023-12-22', '09:00')
