@@ -109,7 +109,8 @@ BEGIN
 					FROM bookings
 					WHERE stylist_id = a_stylist_id
 					AND booking_date = a_booking_date
-					AND (
+					AND ( -- ADD and MINUS 1 second to time relevant end times and start times as well, to allow bookings to be made back to back
+                          -- e.g. if one existing booking ends at 11:30, then a new booking can be made to start at 11:30 (tested below when calling procedure)
 						(a_booking_time BETWEEN booking_time AND SUBTIME(ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)), '00:00:01'))
 						OR (booking_time_finish BETWEEN ADDTIME(booking_time, '00:00:01') AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
 					)
@@ -191,7 +192,8 @@ BEGIN -- local variables to use in procedure:
 					FROM bookings
 					WHERE stylist_id = a_stylist_id
                     AND booking_date = a_booking_date
-					AND (
+					AND ( -- ADD and MINUS 1 second to time relevant end times and start times as well, to allow bookings to be made back to back
+                          -- e.g. if one existing booking ends at 11:30, then an updated booking can be made to start at 11:30 (tested below when calling procedure)
 						(a_booking_time BETWEEN booking_time AND SUBTIME(ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)), '00:00:01'))
 						OR (new_booking_finish_time BETWEEN ADDTIME(booking_time, '00:00:01') AND ADDTIME(booking_time, (SELECT duration FROM treatments WHERE id = treatment_id)))
 					)
