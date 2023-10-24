@@ -3,7 +3,7 @@ import json  # import module to work with json data
 from db_utils import get_all_treatments  # import the module
 
 
-# Sending request to the endpoint to get stylist schedule for specific date
+# Sending an HTTP GET request to the endpoint to get stylist schedule for specific date
 def get_stylist_schedule_by_date(stylist, date):
     result = requests.get(
         "http://127.0.0.1:5000/schedule/{}/{}".format(stylist, date),
@@ -12,9 +12,9 @@ def get_stylist_schedule_by_date(stylist, date):
     return result.json()
 
 
-# Sending request to endpoint to add new client by sending an HTTP POST request with client information
-def add_client(first_name, last_name, mobile, email):
-    client_info = {
+# Sending and HTTP POST request to endpoint to add new customer
+def add_customer(first_name, last_name, mobile, email):
+    customer_info = {
         "first_name": first_name,
         "last_name": last_name,
         "mobile": mobile,
@@ -22,15 +22,15 @@ def add_client(first_name, last_name, mobile, email):
     }
 
     result = requests.post(
-        "http://127.0.0.1:5000/add_new_client",
+        "http://127.0.0.1:5000/add_new_customer",
         headers={"content-type": "application/json"},
-        data=json.dumps(client_info)
+        data=json.dumps(customer_info)
     )
 
     return result.json()
 
 
-# Sending request to endpoint to get information about the customer's booking
+# Sending and HTTP GET request to endpoint to get information about the customer's booking
 def get_bookings(customer_id):
     user_bookings = requests.get(
         "http://127.0.0.1:5000/bookings/{}".format(customer_id),
@@ -39,7 +39,7 @@ def get_bookings(customer_id):
     return user_bookings.json()
 
 
-# Sending request to endpoint to add new booking
+# Sending an HTTP POST request to endpoint to add new booking
 def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_time):
     booking = {
         "customer_id": customer_id,
@@ -58,15 +58,28 @@ def add_booking(customer_id, stylist_id, treatment_id, booking_date, booking_tim
     return result.json()
 
 
-# Sending request to endpoint to cancel an existing booking
-def cancel_booking(booking_id):
-    result = requests.delete(
-        "http://127.0.0.1:5000/cancel_booking/{}".format(booking_id),
-        headers={"content-type": "application/json"},
-    )
-    print("Success")
+# Sending and HTTP DELETE request to endpoint to cancel an existing booking
+# def cancel_booking(customer_id, booking_id):
+#     result = requests.delete(
+#         "http://127.0.0.1:5000/cancel_booking/{}/{}".format(customer_id, booking_id),
+#         headers={"content-type": "application/json"},
+#     )
+#     print("Booking cancelled successfully")
+#
+#     return result
+def cancel_booking(customer_id, booking_id):
+    url = "http://127.0.0.1:5000/cancel_booking/{}/{}".format(customer_id, booking_id)
+    headers = {"content-type": "application/json"}
 
-    return result
+    try:
+        result = requests.delete(url, headers=headers)
+        result.raise_for_status()  # Raise an exception if the response status code indicates an error
+        print("Booking canceled successfully")
+        return result.text
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to cancel booking: {e}")
+        return str(e)
+
 
 
 # Main function that runs all the requests depending on user's choice
@@ -103,12 +116,12 @@ def run():
         registered_user = input("Are you a registered customer?(Y/N): ")
 
         if registered_user == "N" or registered_user == "n":
-            client_name = input(
+            first_name = input(
                 "No worries! To register, we'll just need a few details from you. What's your first name? ")
-            client_last_name = (input("Your last name? "))
-            client_mobile = (input("You mobile number? "))
-            client_email = (input("And lastly, your email address? "))
-            customer_id = add_client(client_name, client_last_name, client_mobile, client_email)
+            last_name = (input("Your last name? "))
+            mobile = (input("You mobile number? "))
+            email = (input("And lastly, your email address? "))
+            customer_id = add_customer(first_name, last_name, mobile, email)
             print(
                 f"\nFab! You are now signed up, with a customer ID of: {customer_id['customer_id']}. "
                 f"\n\nPlease make note of this customer ID so that you can view, create and cancel your bookings."
@@ -182,9 +195,14 @@ def run():
                     f"please login again and follow the on-screen instructions! :)")
 
             elif customer_choice == "cancel":
+                customer_id = input("Enter your customer id: ")
                 booking_id = input("Enter your booking id: ")
-                result = cancel_booking(booking_id)
-                print(f"Your booking with booking ID: {booking_id} was successfully cancelled.")
+                result = cancel_booking(customer_id, booking_id)
+
+                if "Booking cancelled successfully" in result:
+                    print(f"Your booking with booking ID: {booking_id} was successfully cancelled.")
+                else:
+                    print("Booking doesn't exist. Please enter a valid customer and booking ID.")
 
             else:
                 print("Invalid choice. Please enter 'view', 'book', or 'cancel'.")
@@ -198,7 +216,7 @@ def run():
     # After each loop ends, check if the user wants to run the script again
     user_input = input("\nWould you like to restart and login again? (Y/N): ")
     if user_input == "Y" or user_input == "y":
-        run()  # Restart the script
+        run()  # Re-run the script
 
 
 if __name__ == '__main__':

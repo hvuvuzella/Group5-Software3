@@ -37,22 +37,22 @@ def booking_change(appointments):
 
 
 # Define function for changing stylist's bookings data into dictionaries for easier handling in Main.py
-def stylist_booking_change(appointments):
+def stylist_booking_change(bookings):
     stylist_bookings = []
-    for appointment in appointments:
+    for booking in bookings:
         stylist_bookings.append(
             {
-                "name": appointment[1],
-                "last_name": appointment[2],
-                "phone": appointment[3],
-                "treatment": appointment[4],
-                "time": f'{str(appointment[5])} - {str(appointment[6])}'
+                "name": booking[1],
+                "last_name": booking[2],
+                "phone": booking[3],
+                "treatment": booking[4],
+                "time": f'{str(booking[5])} - {str(booking[6])}'
             }
         )
     return stylist_bookings
 
 
-# Define function that adds new client to DB and print relative message
+# Define function that adds new customer to DB and print relative message
 def add_new_customer(first_name, last_name, mobile, email):
     try:
         # Establish a connection to the 'hair_salon' database
@@ -145,7 +145,7 @@ def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_da
         print("Booking updated successfully.")
 
     except Exception:
-        raise DbConnectionError("Failed insert data to DB")
+        raise DbConnectionError("Failed update data to DB")
 
     finally:
         if db_connection:
@@ -154,7 +154,7 @@ def update_booking(booking_id, customer_id, stylist_id, treatment_id, booking_da
 
 
 #  Define function to cancel booking in DB
-def cancel_booking(booking_id):
+def cancel_booking(customer_id, booking_id):
     try:
         # Establish a connection to the 'hair_salon' database
         db_name = "hair_salon"
@@ -163,15 +163,15 @@ def cancel_booking(booking_id):
         print(f"Connected to database: {db_name}")
 
         # Define the SQL query to call the stored procedure for canceling a booking
-        procedure_call = "CALL CancelBooking(%s)"
-        booking_data = (booking_id,)
+        procedure_call = "CALL CancelBooking(%s, %s)"
+        booking_data = (customer_id, booking_id,)
 
         cursor.callproc("CancelBooking", booking_data)
         db_connection.commit()
 
+        print("Booking cancelled successfully")
+        return "Booking cancelled successfully"
         cursor.close()
-
-        print("Booking cancelled successfully.")
 
     except Exception:
         raise DbConnectionError("Failed to cancel booking")
@@ -179,9 +179,8 @@ def cancel_booking(booking_id):
     finally:
         if db_connection:
             db_connection.close()
-            print("DB connection is closed")
 
-    return "Booking cancelled successfully."
+            print("DB connection is closed")
 
 
 #  Define function to get schedule of specific stylist for a specific date
@@ -290,7 +289,7 @@ def main():
     update_booking(11, 11, 3, 3, "2023-12-06", "12:00:00")
 
     # Cancel a booking by its ID
-    cancel_booking(11)
+    cancel_booking(11, 11)
 
     # Retrieve and display the schedule for a stylist on a specific date
     get_stylist_schedule(1, "2023-11-01")
